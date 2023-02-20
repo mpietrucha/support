@@ -4,7 +4,7 @@ namespace Mpietrucha\Support;
 
 use Illuminate\Support\Stringable;
 use Mpietrucha\Support\Concerns\HasFactory;
-use Mpietrucha\Support\ConditionalResolver;
+use Mpietrucha\Support\Condition;
 use Mpietrucha\Support\Types;
 
 class Base64
@@ -18,21 +18,21 @@ class Base64
 
     public function __construct(mixed $string)
     {
-        $this->string = ConditionalResolver::create($string = str($string))
+        $this->string = Condition::create($string = str($string))
             ->addNull($string->isEmpty())
             ->resolve();
     }
 
     public static function decode(?string $value): ?string
     {
-        return ConditionalResolver::create()
+        return Condition::create()
             ->add(fn () => base64_decode($value), ! Types::null($value))
             ->resolve();
     }
 
     public static function encode(?string $value): ?string
     {
-        return ConditionalResolver::create()
+        return Condition::create()
             ->add(fn () => base64_encode($value), ! Types::null($value))
             ->resolve();
     }

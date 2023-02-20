@@ -7,7 +7,7 @@ use Illuminate\Support\Collection;
 use Closure;
 use Exception;
 
-class ConditionalResolver
+class Condition
 {
     use HasFactory;
 
