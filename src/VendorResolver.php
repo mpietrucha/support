@@ -80,7 +80,7 @@ class VendorResolver
     {
         return collect(debug_backtrace())
             ->pluck('file')
-            ->filter(fn (string $path) => $path !== __FILE__)
+            ->filter(fn (string $path) => ! str($path)->startsWith(__DIR__))
             ->map(fn (string $file) => dirname($file))
             ->first();
     }
