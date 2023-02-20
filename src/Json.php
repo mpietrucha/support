@@ -3,6 +3,7 @@
 namespace Mpietrucha\Support;
 
 use Mpietrucha\Support\Types;
+use Illuminate\Support\Collection;
 
 class Json
 {
@@ -41,7 +42,12 @@ class Json
         return $value;
     }
 
-    protected static function forceDecode(?string $string, bool $array = false): mixed
+    public static function decodeToCollection(?string $string): Collection
+    {
+        return collect(self::decodeToArray($string));
+    }
+
+    public static function forceDecode(?string $string, bool $array = false): mixed
     {
         return json_decode($string, $array);
     }
