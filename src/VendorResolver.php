@@ -12,14 +12,12 @@ class VendorResolver
 {
     use HasFactory;
 
-    protected Finder $finder;
-
     protected ?Collection $builder = null;
     protected ?string $composerJsonPath = null;
 
-    public function __construct()
+    public function __construct(protected Finder $finder = new Finder)
     {
-        $this->finder = new Finder;
+        $this->exclude();
     }
 
     public function __toString(): string
@@ -29,27 +27,21 @@ class VendorResolver
 
     public function path(): string
     {
-        $this->exclude();
-
         return $this->composerJsonPath . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . (string) $this;
     }
 
     public function name(): string
     {
-        return $this->exclude()->first();
+        return $this->builder->first();
     }
 
     public function package(): string
     {
-        return $this->exclude()->last();
+        return $this->builder->last();
     }
 
-    protected function exclude(): Collection
+    protected function exclude(): void
     {
-        if ($this->builder) {
-            return $this->builder;
-        }
-
         $composerJsonFile = $this->find();
 
         if (! $composerJsonFile) {
@@ -65,13 +57,13 @@ class VendorResolver
         $this->composerJsonPath = $composerJsonFile->getPath();
 
         $this->builder = str($composerJson->name)->explode(DIRECTORY_SEPARATOR);
-
-        return $this->exclude();
     }
 
-    protected function find(string $in = __DIR__): ?SplFileInfo
+    protected function find(?string $in = null): ?SplFileInfo
     {
-        if ($in === DIRECTORY_SEPARATOR) {
+        $in ??= $this->extractCallerPath();
+
+        if (! $in || $in === DIRECTORY_SEPARATOR) {
             return null;
         }
 
@@ -82,5 +74,14 @@ class VendorResolver
         }
 
         return $this->find(str($in)->beforeLast(DIRECTORY_SEPARATOR));
+    }
+
+    protected function extractCallerPath(): ?string
+    {
+        return collect(debug_backtrace())
+            ->pluck('file')
+            ->filter(fn (string $path) => $path !== __FILE__)
+            ->map(fn (string $file) => dirname($file))
+            ->first();
     }
 }
