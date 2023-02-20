@@ -6,7 +6,7 @@ use Mpietrucha\Support\VendorResolver;
 
 trait HasVendor
 {
-    public function vendor(): string
+    public function vendor(): VendorResolver
     {
         return VendorResolver::create();
     }
