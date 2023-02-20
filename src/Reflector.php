@@ -4,7 +4,7 @@ namespace Mpietrucha\Support;
 
 use ReflectionClass;
 use Illuminate\Support\Collection;
-use Mpietrucha\Factory\HasFactory;
+use Mpietrucha\Support\Concerns\HasFactory;
 use Closure;
 
 class Reflector extends ReflectionClass
