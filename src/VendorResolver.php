@@ -27,7 +27,7 @@ class VendorResolver
 
     public function path(): string
     {
-        return $this->composerJsonPath . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . (string) $this;
+        return $this->composerJsonPath;
     }
 
     public function name(): string
