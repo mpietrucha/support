@@ -8,8 +8,8 @@
             "Mpietrucha\\Support\\": "src/"
         },
         "files": [
-             "src/helpers.php"
-         ]
+            "src/helpers.php"
+        ]
     },
     "authors": [
         {
