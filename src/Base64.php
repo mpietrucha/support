@@ -37,6 +37,17 @@ class Base64
             ->resolve();
     }
 
+    public static function encodeWithoutEnding(?string $value): ?string
+    {
+        $encoded = self::encode($value);
+
+        if (! $encoded) {
+            return null;
+        }
+
+        return str($encoded)->rtrim('=');
+    }
+
     public function contentType(): ?Stringable
     {
         $contentType = $this->string?->between(self::START_PATTERN, self::END_PATTERN);
