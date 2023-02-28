@@ -32,6 +32,6 @@ class Reflector extends ReflectionClass
 
     protected function filtered(Collection $results, ?Closure $filter): Collection
     {
-        return $results->when(! is_null($filter), fn (Collection $results) => $results->filter($filter));
+        return $results->when(! Types::null($filter), fn (Collection $results) => $results->filter($filter));
     }
 }
