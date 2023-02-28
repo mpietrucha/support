@@ -5,7 +5,7 @@ namespace Mpietrucha\Support;
 use Exception;
 use Symfony\Component\Finder\Finder;
 use Mpietrucha\Support\Concerns\HasFactory;
-use illuminate\Support\Collection;
+use Illuminate\Support\Collection;
 use Symfony\Component\Finder\SplFileInfo;
 
 class Vendor
