@@ -8,7 +8,7 @@ use Mpietrucha\Support\Concerns\HasFactory;
 use illuminate\Support\Collection;
 use Symfony\Component\Finder\SplFileInfo;
 
-class VendorResolver
+class Vendor
 {
     use HasFactory;
 
@@ -48,15 +48,15 @@ class VendorResolver
             throw new Exception('Cannot find composer.json file.');
         }
 
-        $composerJson = json_decode(file_get_contents($composerJsonFile->getPathName()));
+        $composerJson = Json::decodeToCollection($composerJsonFile->getContents());
 
-        if (! $composerJson->name ?? null) {
+        if (! $vendorName = $composerJson->get('name')) {
             throw new Exception('Given composer.json does not contains name property');
         }
 
         $this->composerJsonPath = $composerJsonFile->getPath();
 
-        $this->builder = str($composerJson->name)->explode(DIRECTORY_SEPARATOR);
+        $this->builder = str($vendorName)->explode(DIRECTORY_SEPARATOR);
     }
 
     protected function find(?string $in = null): ?SplFileInfo

@@ -2,12 +2,12 @@
 
 namespace Mpietrucha\Support\Concerns;
 
-use Mpietrucha\Support\VendorResolver;
+use Mpietrucha\Support\Vendor;
 
 trait HasVendor
 {
-    public function vendor(): VendorResolver
+    public function vendor(): Vendor
     {
-        return VendorResolver::create();
+        return Vendor::create();
     }
 }
