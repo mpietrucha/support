@@ -26,9 +26,9 @@ class Reflector extends ReflectionClass
 		return $this->filtered($methods, $filter);
 	}
 
-    public function arguments(string $method, ?Closure $filter = null): Collection
+    public function arguments(string $name, ?Closure $filter = null): Collection
     {
-        $method = $this->methods(fn (ReflectionMethod $method) => $method->getName() === $method)->first();
+        $method = $this->methods(fn (ReflectionMethod $method) => $method->getName() === $name)->first();
 
         return collect($method?->getParameters());
     }
