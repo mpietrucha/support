@@ -11,7 +11,16 @@
         }
     ],
     "require": {
-        "php": "^8.5"
+        "php": "^8.5",
+        "composer-runtime-api": "^2.2",
+        "illuminate/support": "^12.54",
+        "spatie/invade": "^2.1"
+    },
+    "require-dev": {
+        "ergebnis/composer-normalize": "^2.50",
+        "larastan/larastan": "^3.9",
+        "phpstan/phpstan": "^2.1",
+        "symfony/var-dumper": "^8.0"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
