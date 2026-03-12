@@ -1,0 +1,12 @@
+{
+    "preset": "laravel",
+    "rules": {
+        "single_line_empty_body": false,
+        "ordered_class_elements": true,
+        "ordered_types": true,
+        "concat_space": {
+            "spacing": "one"
+        }
+    },
+    "notPath": ["src/Enumerable/Contracts/EnumerableInterface.php"]
+}

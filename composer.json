@@ -1,0 +1,44 @@
+{
+    "name": "mpietrucha/support",
+    "description": "The support package.",
+    "license": "MIT",
+    "type": "library",
+    "version": "1.0.0",
+    "authors": [
+        {
+            "name": "Michał Pietrucha",
+            "email": "michal.pietrucha@off-site.pl"
+        }
+    ],
+    "require": {
+        "php": "^8.5"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "autoload": {
+        "psr-4": {
+            "Mpietrucha\\Support\\": "src/"
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "ergebnis/composer-normalize": true
+        },
+        "optimize-autoloader": true,
+        "sort-packages": true
+    },
+    "scripts": {
+        "post-update-cmd": [
+            "@composer normalize"
+        ],
+        "lint": "pint --verbose",
+        "prettier:config": "curl -sSLO https://raw.githubusercontent.com/mpietrucha/prettier/refs/heads/main/dist/.prettierrc",
+        "test": [
+            "@test:lint",
+            "@test:types"
+        ],
+        "test:lint": "@lint --test",
+        "test:types": "phpstan analyse --ansi"
+    },
+    "$schema": "https://getcomposer.org/schema.json"
+}
