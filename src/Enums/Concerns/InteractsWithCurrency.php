@@ -2,10 +2,11 @@
 
 namespace Mpietrucha\Support\Enums\Concerns;
 
+use Mpietrucha\Support\Enums\Contracts\InteractsWithCurrencyInterface;
 use Symfony\Component\Intl\Currencies;
 
 /**
- * @phpstan-require-implements \BackedEnum
+ * @phpstan-require-implements InteractsWithCurrencyInterface
  */
 trait InteractsWithCurrency
 {
