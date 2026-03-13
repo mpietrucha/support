@@ -14,6 +14,8 @@ class Reflection extends ReflectionClass
 
     public static function base(object|string $instance): static
     {
-        return Instance::base($instance) |> static::make(...);
+        $instance = Instance::base($instance) ?? $instance;
+
+        return static::make($instance);
     }
 }

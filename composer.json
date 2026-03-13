@@ -14,13 +14,18 @@
         "php": "^8.5",
         "composer-runtime-api": "^2.2",
         "illuminate/support": "^12.54",
-        "spatie/invade": "^2.1"
+        "laravel/serializable-closure": "^2.0",
+        "spatie/invade": "^2.1",
+        "symfony/filesystem": "^8.0",
+        "symfony/finder": "^7.4",
+        "symfony/process": "^7.4"
     },
     "require-dev": {
         "ergebnis/composer-normalize": "^2.50",
         "larastan/larastan": "^3.9",
+        "orchestra/testbench": "^10.09",
         "phpstan/phpstan": "^2.1",
-        "symfony/var-dumper": "^8.0"
+        "symfony/var-dumper": "^7.4"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
