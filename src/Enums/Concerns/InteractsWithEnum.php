@@ -5,15 +5,13 @@ namespace Mpietrucha\Support\Enums\Concerns;
 use BackedEnum;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
+use Mpietrucha\Support\Enums\Contracts\InteractsWithEnumInterface;
 
 /**
- * @phpstan-require-implements \UnitEnum
+ * @phpstan-require-implements InteractsWithEnumInterface
  */
 trait InteractsWithEnum
 {
-    /**
-     * @return class-string<static>
-     */
     public static function use(): string
     {
         return static::class;
