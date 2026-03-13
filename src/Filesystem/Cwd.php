@@ -2,12 +2,12 @@
 
 namespace Mpietrucha\Support\Filesystem;
 
+use Mpietrucha\Support\Concerns\UtilizableStrings;
 use Mpietrucha\Support\Filesystem;
-use Mpietrucha\Support\Utilizer\Concerns\Utilizable;
 
 abstract class Cwd
 {
-    use Utilizable\Strings;
+    use UtilizableStrings;
 
     public static function get(): string
     {

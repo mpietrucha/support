@@ -1,13 +1,13 @@
 <?php
 
-namespace Mpietrucha\Support\Utilizer\Concerns\Utilizable;
+namespace Mpietrucha\Support\Concerns;
 
-use Mpietrucha\Support\Utilizer\Concerns\Utilizable;
+use Mpietrucha\Support\Str;
 
 /**
  * @method static string utilize()
  */
-trait Strings
+trait UtilizableStrings
 {
     use Utilizable;
 
@@ -18,6 +18,6 @@ trait Strings
 
     protected static function hydrate(): string
     {
-        return '';
+        return Str::none();
     }
 }

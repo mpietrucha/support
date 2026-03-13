@@ -3,18 +3,19 @@
 namespace Mpietrucha\Support\Filesystem;
 
 use Mpietrucha\Support\Filesystem;
-use Symfony\Component\Filesystem\Path as Adapter;
+use Mpietrucha\Support\Str;
+use Symfony\Component\Filesystem\Path as SymfonyPath;
 
 abstract class Path
 {
     public static function delimiter(): string
     {
-        return '/';
+        return Str::slash();
     }
 
     public static function join(string ...$paths): string
     {
-        return Adapter::join(...$paths);
+        return SymfonyPath::join(...$paths);
     }
 
     public static function name(string $path): string
@@ -22,23 +23,14 @@ abstract class Path
         return static::normalize($path) |> Filesystem::basename(...);
     }
 
-    public static function finish(string $path, string $name): string
-    {
-        if (static::name($path) === $name) {
-            return $path;
-        }
-
-        return static::join($path, $name);
-    }
-
     public static function canonicalize(string $path): string
     {
-        return Adapter::canonicalize($path);
+        return SymfonyPath::canonicalize($path);
     }
 
     public static function normalize(string $path): string
     {
-        return Adapter::normalize($path);
+        return SymfonyPath::normalize($path);
     }
 
     public static function directory(string $path, ?int $level = null): string
@@ -47,7 +39,7 @@ abstract class Path
             return $path;
         }
 
-        $directory = Adapter::getDirectory($path);
+        $directory = SymfonyPath::getDirectory($path);
 
         if ($level === null) {
             return $directory;
@@ -62,34 +54,34 @@ abstract class Path
 
     public static function home(): string
     {
-        return Adapter::getHomeDirectory();
+        return SymfonyPath::getHomeDirectory();
     }
 
     public static function root(string $path): string
     {
-        return Adapter::getRoot($path);
+        return SymfonyPath::getRoot($path);
     }
 
     public static function nameWithoutExtension(string $path, ?string $extension = null): string
     {
-        return Adapter::getFilenameWithoutExtension($path, $extension);
+        return SymfonyPath::getFilenameWithoutExtension($path, $extension);
     }
 
     public static function absolute(string $path, string $directory): string
     {
-        return Adapter::makeAbsolute($path, $directory);
+        return SymfonyPath::makeAbsolute($path, $directory);
     }
 
     public static function relative(string $path, string $directory): string
     {
-        return Adapter::makeRelative($path, $directory);
+        return SymfonyPath::makeRelative($path, $directory);
     }
 
     public static function get(string $path): string
     {
-        $canonicalized = static::canonicalize($path);
+        $path = static::canonicalize($path);
 
-        return realpath($canonicalized) ?: $canonicalized;
+        return realpath($path) ?: $path;
     }
 
     public static function build(string $path, ?string $directory = null): string
@@ -103,8 +95,6 @@ abstract class Path
 
     public static function cwd(string $path): string
     {
-        $cwd = Cwd::get();
-
-        return static::build($path, $cwd);
+        return static::build($path, Cwd::get());
     }
 }

@@ -3,22 +3,21 @@
 namespace Mpietrucha\Support;
 
 use Composer\Autoload\ClassLoader;
-use Illuminate\Filesystem\Filesystem as Adapter;
+use Illuminate\Filesystem\Filesystem as IlluminateFilesystem;
+use Illuminate\Support\Arr;
 use Mpietrucha\Support\Exception\RuntimeException;
-use Mpietrucha\Support\Filesystem\Concerns\InteractsWithExistence;
 use Mpietrucha\Support\Filesystem\Path;
 use Mpietrucha\Support\Forward\Concerns\Forwardable;
-use Mpietrucha\Support\Instance\Path as Instance;
 use Symfony\Component\Process\Process;
 
 /**
- * @mixin Adapter
+ * @mixin IlluminateFilesystem
  */
 abstract class Filesystem
 {
-    use Forwardable, InteractsWithExistence;
+    use Forwardable;
 
-    protected static ?Adapter $adapter = null;
+    protected static ?IlluminateFilesystem $adapter = null;
 
     /**
      * @param  array<mixed>  $arguments
@@ -30,9 +29,14 @@ abstract class Filesystem
         return static::forward($adapter)->eval($method, $arguments);
     }
 
-    public static function adapter(): Adapter
+    public static function adapter(): IlluminateFilesystem
     {
-        return static::$adapter ??= new Adapter;
+        return static::$adapter ??= new IlluminateFilesystem;
+    }
+
+    final public static function unexists(string $path): bool
+    {
+        return static::adapter()->missing($path);
     }
 
     public static function cwd(): string
@@ -67,24 +71,17 @@ abstract class Filesystem
         return hash($algorithm, $process->getOutput());
     }
 
-    public static function namespace(string $path, bool $canonicalized = false): ?string
+    public static function namespace(string $path): ?string
     {
-        $loaders = ClassLoader::getRegisteredLoaders() |> collect(...);
-
         $path = Path::get($path);
 
-        $namespace = $loaders
-            ->map
-            ->getClassMap()
-            ->collapse()
-            ->search(fn (string $loaded) => Path::canonicalize($loaded) === $path);
-
-        if (is_string($namespace)) {
-            return $canonicalized ? Instance::canonicalize($namespace) : $namespace;
-        }
-
-        return Tokenizer::make($path)
-            ->path()
-            ->value($canonicalized);
+        /** @var null|string */
+        return Arr::map(
+            ClassLoader::getRegisteredLoaders(),
+            fn (ClassLoader $loader) => array_find_key(
+                $loader->getClassMap(),
+                fn (string $file) => Path::canonicalize($file) === $path
+            )
+        ) |> Arr::whereNotNull(...) |> Arr::first(...);
     }
 }

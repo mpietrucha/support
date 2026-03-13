@@ -4,9 +4,11 @@ namespace Mpietrucha\Support;
 
 use Closure;
 use Composer\Autoload\ClassLoader;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Mpietrucha\Support\Exception\RuntimeException;
-use Mpietrucha\Support\Instance\Serializable;
+use Mpietrucha\Support\Filesystem\Path;
+use Mpietrucha\Support\Instance\SerializableInstance;
 
 abstract class Instance
 {
@@ -19,61 +21,49 @@ abstract class Instance
             return get_class($instance);
         }
 
-        if (! class_exists($instance, $autoload)) {
-            return null;
-        }
-
-        return $instance;
+        return class_exists($instance, $autoload) ? $instance : null;
     }
 
-    public static function file(object|string $instance, bool $autoload = false): ?string
+    public static function file(object|string $instance): ?string
     {
-        $namespace = match (true) {
-            is_string($instance) => $instance,
-            default => static::namespace($instance)
-        };
-
-        $loaders = ClassLoader::getRegisteredLoaders() |> collect(...);
-
-        $file = $loaders
-            ->map
-            ->findFile($namespace)
-            ->first();
-
-        if (is_string($file)) {
-            return $file;
+        if (is_object($instance)) {
+            $instance = static::namespace($instance);
         }
 
-        if (! class_exists($namespace, $autoload)) {
+        /** @var null|string */
+        $file = Arr::map(
+            ClassLoader::getRegisteredLoaders(),
+            fn (ClassLoader $loader) => $loader->findFile($instance) ?: null
+        ) |> Arr::whereNotNull(...) |> Arr::first(...);
+
+        if ($file === null) {
             return null;
         }
 
-        return Reflection::make($instance)->getFileName() ?: null;
+        return Path::canonicalize($file);
     }
 
     /**
-     * @return null|class-string
+     * @return ($instance is object ? class-string : null|class-string)
      */
     public static function base(object|string $instance): ?string
     {
-        $namespace = static::namespace($instance);
+        $base = static::namespace($instance);
 
-        if ($namespace === null) {
+        if ($base === null) {
             return null;
         }
 
-        while ($base = get_parent_class($namespace)) {
-            $namespace = $base;
+        while ($parent = get_parent_class($base)) {
+            $base = $parent;
         }
 
-        return $namespace;
+        return $base;
     }
 
-    public static function serialize(callable|object $instance): string
+    public static function serialize(object $instance): string
     {
-        $serializable = Serializable::make($instance);
-
-        return serialize($serializable);
+        return SerializableInstance::make($instance) |> serialize(...);
     }
 
     public static function unserialize(string $instance): object
@@ -86,15 +76,15 @@ abstract class Instance
 
         /** @var object */
         return match (true) {
-            $instance instanceof Serializable => $instance(),
+            $instance instanceof SerializableInstance => $instance(),
             default => $instance
         };
     }
 
-    public static function bind(callable $callable, ?object $context = null, null|object|string $scope = null): Closure
+    public static function bind(Closure $closure, ?object $context = null, null|object|string $scope = null): Closure
     {
         /** @var Closure $closure */
-        $closure = static::serialize($callable) |> static::unserialize(...);
+        $closure = static::serialize($closure) |> static::unserialize(...);
 
         /** @var object|null|class-string $scope */
         $scope = match (true) {
@@ -104,11 +94,6 @@ abstract class Instance
         };
 
         return $closure->bindTo($context, $scope);
-    }
-
-    public static function hash(object $instance, string $algorithm = 'md5'): string
-    {
-        return hash($algorithm, static::serialize($instance));
     }
 
     /**

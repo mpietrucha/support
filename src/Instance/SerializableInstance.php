@@ -5,14 +5,12 @@ namespace Mpietrucha\Support\Instance;
 use Laravel\SerializableClosure\SerializableClosure;
 use Mpietrucha\Support\Concerns\Makeable;
 
-class Serializable extends SerializableClosure
+class SerializableInstance extends SerializableClosure
 {
     use Makeable;
 
-    public function __construct(callable|object $data)
+    public function __construct(object $instance)
     {
-        $data = fn () => $data;
-
-        parent::__construct($data);
+        parent::__construct(fn () => $instance);
     }
 }

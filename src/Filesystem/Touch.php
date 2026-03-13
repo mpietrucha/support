@@ -9,10 +9,6 @@ abstract class Touch
 {
     public static function file(string $path, ?string $directory = null): string
     {
-        if ($path === '') {
-            return $path;
-        }
-
         $file = static::build($path, $directory);
 
         Path::directory(...) |> $file->pipe(...) |> static::directory(...);
@@ -23,10 +19,8 @@ abstract class Touch
 
     public static function directory(string $path, ?string $directory = null): string
     {
-        $directory = static::build($path, $directory);
-
         /** @phpstan-ignore argument.type */
-        return Filesystem::ensureDirectoryExists(...) |> $directory->tap(...) |> static::normalize(...);
+        return Filesystem::ensureDirectoryExists(...) |> static::build($path, $directory)->tap(...) |> static::normalize(...);
     }
 
     protected static function normalize(string $path): string

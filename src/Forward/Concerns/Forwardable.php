@@ -16,8 +16,6 @@ trait Forwardable
      */
     public static function forward(object|string $destination, ?string $source = null): Forward
     {
-        $source ??= static::class;
-
-        return Forward::make($destination, $source);
+        return Forward::make($destination, $source ?? static::class);
     }
 }

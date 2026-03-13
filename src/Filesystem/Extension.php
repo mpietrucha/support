@@ -2,16 +2,18 @@
 
 namespace Mpietrucha\Support\Filesystem;
 
-use Mpietrucha\Support\Filesystem\Concerns\InteractsWithExistence;
 use Symfony\Component\Filesystem\Path;
 
 abstract class Extension
 {
-    use InteractsWithExistence;
-
     public static function exists(string $path): bool
     {
         return Path::hasExtension($path);
+    }
+
+    final public static function unexists(string $path): bool
+    {
+        return ! static::exists($path);
     }
 
     public static function get(string $path): ?string
