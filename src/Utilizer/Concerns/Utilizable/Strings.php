@@ -1,8 +1,8 @@
 <?php
 
-namespace Mpietrucha\Support\Concerns\Utilizable;
+namespace Mpietrucha\Support\Utilizer\Concerns\Utilizable;
 
-use Mpietrucha\Support\Concerns\Utilizable;
+use Mpietrucha\Support\Utilizer\Concerns\Utilizable;
 
 /**
  * @method static string utilize()

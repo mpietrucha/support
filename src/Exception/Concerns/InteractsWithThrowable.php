@@ -10,6 +10,9 @@ use Mpietrucha\Support\Exception\PendingException;
 use Mpietrucha\Support\Instance;
 use Mpietrucha\Support\Reflection;
 
+/**
+ * @phpstan-require-implements \Throwable
+ */
 trait InteractsWithThrowable
 {
     use Creatable;

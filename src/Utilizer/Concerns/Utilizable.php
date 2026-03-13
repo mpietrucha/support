@@ -1,6 +1,6 @@
 <?php
 
-namespace Mpietrucha\Support\Concerns;
+namespace Mpietrucha\Support\Utilizer\Concerns;
 
 trait Utilizable
 {

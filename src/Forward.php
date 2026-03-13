@@ -52,7 +52,10 @@ class Forward
     {
         $destination = $this->destination();
 
-        $namespace = Instance::namespace($destination);
+        if (Instance::namespace($destination) === null) {
+            /** @var string $destination */
+            BadMethodCallException::throw('Unprocessable forward source %s', $destination);
+        }
 
         try {
             $invader = invade($destination);
@@ -66,7 +69,7 @@ class Forward
                 $exception->previous($e);
             });
 
-            BadMethodCallException::throw('Failed to forward method %s::%s()', $namespace, $method);
+            BadMethodCallException::throw('Failed to forward method %s::%s()', $this->source(), $method);
         }
     }
 }

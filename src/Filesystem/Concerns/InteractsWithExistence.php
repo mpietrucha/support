@@ -4,6 +4,9 @@ namespace Mpietrucha\Support\Filesystem\Concerns;
 
 use Mpietrucha\Support\Filesystem;
 
+/**
+ * @internal
+ */
 trait InteractsWithExistence
 {
     public static function exists(string $path): bool

@@ -2,8 +2,8 @@
 
 namespace Mpietrucha\Support\Filesystem;
 
-use Mpietrucha\Support\Concerns\Utilizable;
 use Mpietrucha\Support\Filesystem;
+use Mpietrucha\Support\Utilizer\Concerns\Utilizable;
 
 abstract class Cwd
 {

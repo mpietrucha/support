@@ -2,11 +2,11 @@
 
 namespace Mpietrucha\Support\Filesystem;
 
-use Mpietrucha\Support\Concerns\Utilizable;
 use Mpietrucha\Support\Filesystem;
 use Mpietrucha\Support\Filesystem\Temporary\Directory;
 use Mpietrucha\Support\Filesystem\Temporary\Name;
 use Mpietrucha\Support\Finder;
+use Mpietrucha\Support\Utilizer\Concerns\Utilizable;
 
 abstract class Temporary
 {
