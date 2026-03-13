@@ -5,7 +5,7 @@ namespace Mpietrucha\Support\Enums\Contracts;
 use Illuminate\Support\Collection;
 use UnitEnum;
 
-interface InteractsWithEnumInterface extends UnitEnum
+interface EnumInterface extends UnitEnum
 {
     /**
      * @return class-string<static>

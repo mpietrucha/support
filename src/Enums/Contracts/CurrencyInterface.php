@@ -4,7 +4,7 @@ namespace Mpietrucha\Support\Enums\Contracts;
 
 use BackedEnum;
 
-interface InteractsWithCurrencyInterface extends BackedEnum, InteractsWithEnumInterface
+interface CurrencyInterface extends BackedEnum, EnumInterface
 {
     public function symbol(): string;
 }

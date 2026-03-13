@@ -5,10 +5,10 @@ namespace Mpietrucha\Support\Enums\Concerns;
 use BackedEnum;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
-use Mpietrucha\Support\Enums\Contracts\InteractsWithEnumInterface;
+use Mpietrucha\Support\Enums\Contracts\EnumInterface;
 
 /**
- * @phpstan-require-implements InteractsWithEnumInterface
+ * @phpstan-require-implements EnumInterface
  */
 trait InteractsWithEnum
 {

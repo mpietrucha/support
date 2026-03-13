@@ -1,8 +1,8 @@
 <?php
 
-use Mpietrucha\Support\Enums\Contracts\InteractsWithCurrencyInterface;
+use Mpietrucha\Support\Enums\Contracts\CurrencyInterface;
 
-enum InteractsWithCurrency: string implements InteractsWithCurrencyInterface
+enum InteractsWithCurrency: string implements CurrencyInterface
 {
     use Mpietrucha\Support\Enums\Concerns\InteractsWithCurrency;
 }
