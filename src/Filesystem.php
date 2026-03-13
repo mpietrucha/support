@@ -67,11 +67,6 @@ abstract class Filesystem
         return hash($algorithm, $process->getOutput());
     }
 
-    public static function tokenize(string $path): Tokenizer
-    {
-        return static::get($path) |> Tokenizer::make(...);
-    }
-
     public static function namespace(string $path, bool $canonicalized = false): ?string
     {
         $loaders = ClassLoader::getRegisteredLoaders() |> collect(...);
@@ -88,8 +83,8 @@ abstract class Filesystem
             return $canonicalized ? Instance::canonicalize($namespace) : $namespace;
         }
 
-        return static::tokenize($path)
+        return Tokenizer::make($path)
             ->path()
-            ->get($canonicalized);
+            ->value($canonicalized);
     }
 }

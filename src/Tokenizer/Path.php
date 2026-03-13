@@ -6,7 +6,6 @@ use Illuminate\Support\Collection;
 use Mpietrucha\Support\Concerns\Makeable;
 use Mpietrucha\Support\Instance\Path as Adapter;
 use Mpietrucha\Support\Tokenizer;
-use Mpietrucha\Support\Tokenizer\Path\Name;
 
 /**
  * @phpstan-import-type TokenCollection from Tokenizer
@@ -26,33 +25,21 @@ class Path
 
     public function namespace(): ?Token
     {
-        return Name::get() |> $this->tokens()->first->is(...);
+        return $this->tokens()->first->is(T_NAME_QUALIFIED);
     }
 
     public function name(): ?Token
     {
+        $previous = [T_CLASS, T_TRAIT, T_INTERFACE, T_ENUM];
+
         /** @var null|Token */
         return $this->tokens()->pipeThrough([
-            fn (Collection $tokens) => Name::previous() |> $tokens->skipUntil->is(...),
-            fn (Collection $tokens) => Name::next() |> $tokens->first->is(...),
+            fn (Collection $tokens) => $tokens->skipUntil->is($previous),
+            fn (Collection $tokens) => $tokens->first->is(T_STRING),
         ]);
     }
 
-    public function canonicalize(): ?Token
-    {
-        return Name::canonicalized() |> $this->build(...);
-    }
-
-    public function get(bool $canonicalized = false): ?Token
-    {
-        if ($canonicalized) {
-            return $this->canonicalize();
-        }
-
-        return Name::get() |> $this->build(...);
-    }
-
-    protected function build(int $id): ?Token
+    public function value(bool $canonicalized = false): ?string
     {
         [$namespace, $name] = [$this->namespace(), $this->name()];
 
@@ -64,11 +51,11 @@ class Path
             return null;
         }
 
-        if ($id === Name::canonicalized()) {
+        if ($canonicalized) {
             $namespace = Adapter::canonicalize($namespace);
         }
 
-        return Token::make($id, Adapter::join($namespace, $name));
+        return Adapter::join($namespace, $name);
     }
 
     /**
