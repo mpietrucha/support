@@ -5,8 +5,8 @@ namespace Mpietrucha\Support\Forward\Concerns;
 use Mpietrucha\Support\Forward;
 
 /**
- * @phpstan-import-type ForwardTarget from \Mpietrucha\Support\Forward
- * @phpstan-import-type ForwardSource from \Mpietrucha\Support\Forward
+ * @phpstan-import-type ForwardTarget from Forward
+ * @phpstan-import-type ForwardSource from Forward
  */
 trait Forwardable
 {
