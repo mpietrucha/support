@@ -33,6 +33,7 @@
     "prefer-stable": true,
     "autoload": {
         "psr-4": {
+            "Mpietrucha\\PHPStan\\": "phpstan/src/",
             "Mpietrucha\\Support\\": "src/"
         }
     },

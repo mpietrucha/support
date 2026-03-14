@@ -41,7 +41,7 @@ abstract class Filesystem
 
     public static function cwd(): string
     {
-        return getcwd() ?: RuntimeException::throw('System cwd is unavailable');
+        return getcwd() ?: RuntimeException::throw('Unable to determine the current working directory');
     }
 
     public static function touch(string $path, ?int $modified = null, ?int $accessed = null): bool

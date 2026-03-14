@@ -1,0 +1,5 @@
+services:
+  -
+    class: Mpietrucha\PHPStan\ReturnTypes\EnumExtension
+    tags:
+        - phpstan.broker.dynamicMethodReturnTypeExtension

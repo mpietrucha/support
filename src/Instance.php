@@ -71,7 +71,7 @@ abstract class Instance
         $instance = unserialize($instance);
 
         if (! is_object($instance)) {
-            RuntimeException::throw('Unserialized data is not an object');
+            RuntimeException::throw('Unable to unserialize the given data into an object');
         }
 
         /** @var object */

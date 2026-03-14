@@ -9,7 +9,7 @@ use Spatie\Invade\StaticInvader;
 use Throwable;
 
 /**
- * @phpstan-type ForwardDestination object|class-string
+ * @phpstan-type ForwardTarget object|class-string
  * @phpstan-type ForwardSource class-string
  */
 class Forward
@@ -17,19 +17,19 @@ class Forward
     use Makeable;
 
     /**
-     * @param  ForwardDestination  $destination
+     * @param  ForwardTarget  $target
      * @param  ForwardSource  $source
      */
-    public function __construct(protected object|string $destination, protected string $source)
+    public function __construct(protected object|string $target, protected string $source)
     {
     }
 
     /**
-     * @return ForwardDestination
+     * @return ForwardTarget
      */
-    public function destination(): object|string
+    public function target(): object|string
     {
-        return $this->destination;
+        return $this->target;
     }
 
     /**
@@ -50,15 +50,15 @@ class Forward
      */
     public function eval(string $method, iterable $arguments): mixed
     {
-        $destination = $this->destination();
+        $target = $this->target();
 
-        if (Instance::namespace($destination) === null) {
-            /** @var string $destination */
-            BadMethodCallException::throw('Unprocessable forward source %s', $destination);
+        if (Instance::namespace($target) === null) {
+            /** @var string $target */
+            BadMethodCallException::throw('Invalid forwad target `%s`', $target);
         }
 
         try {
-            $invader = invade($destination);
+            $invader = invade($target);
 
             return match (true) {
                 $invader instanceof StaticInvader => $invader->method($method)->call(...$arguments),
@@ -69,7 +69,7 @@ class Forward
                 $exception->previous($e);
             });
 
-            BadMethodCallException::throw('Failed to forward method %s::%s()', $this->source(), $method);
+            BadMethodCallException::throw('Unable to forward call `%s::%s()`', $this->source(), $method);
         }
     }
 }
