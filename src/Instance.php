@@ -13,27 +13,27 @@ use Mpietrucha\Support\Instance\SerializableInstance;
 abstract class Instance
 {
     /**
-     * @return ($instance is object ? class-string : null|class-string)
+     * @return ($class is object ? class-string : null|class-string)
      */
-    public static function namespace(object|string $instance, bool $autoload = true): ?string
+    public static function namespace(object|string $class, bool $autoload = true): ?string
     {
-        if (is_object($instance)) {
-            return get_class($instance);
+        if (is_object($class)) {
+            return get_class($class);
         }
 
-        return class_exists($instance, $autoload) ? $instance : null;
+        return class_exists($class, $autoload) ? $class : null;
     }
 
-    public static function file(object|string $instance): ?string
+    public static function file(object|string $class): ?string
     {
-        if (is_object($instance)) {
-            $instance = static::namespace($instance);
+        if (is_object($class)) {
+            $class = static::namespace($class);
         }
 
         /** @var null|string */
         $file = Arr::map(
             ClassLoader::getRegisteredLoaders(),
-            fn (ClassLoader $loader) => $loader->findFile($instance) ?: null
+            fn (ClassLoader $loader) => $loader->findFile($class) ?: null
         ) |> Arr::whereNotNull(...) |> Arr::first(...);
 
         if ($file === null) {
@@ -44,21 +44,21 @@ abstract class Instance
     }
 
     /**
-     * @return ($instance is object ? class-string : null|class-string)
+     * @return ($class is object ? class-string : null|class-string)
      */
-    public static function base(object|string $instance): ?string
+    public static function base(object|string $class): ?string
     {
-        $base = static::namespace($instance);
+        $class = static::namespace($class);
 
-        if ($base === null) {
+        if ($class === null) {
             return null;
         }
 
-        while ($parent = get_parent_class($base)) {
-            $base = $parent;
+        while ($base = get_parent_class($class)) {
+            $class = $base;
         }
 
-        return $base;
+        return $class;
     }
 
     public static function serialize(object $instance): string
@@ -66,9 +66,9 @@ abstract class Instance
         return SerializableInstance::make($instance) |> serialize(...);
     }
 
-    public static function unserialize(string $instance): object
+    public static function unserialize(string $data): object
     {
-        $instance = unserialize($instance);
+        $instance = unserialize($data);
 
         if (! is_object($instance)) {
             RuntimeException::throw('Unable to unserialize the given data into an object');
@@ -99,8 +99,8 @@ abstract class Instance
     /**
      * @return Collection<string, string>
      */
-    public static function traits(object|string $instance): Collection
+    public static function traits(object|string $class): Collection
     {
-        return class_uses_recursive($instance) |> collect(...);
+        return class_uses_recursive($class) |> collect(...);
     }
 }

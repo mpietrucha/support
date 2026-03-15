@@ -12,10 +12,10 @@ class Reflection extends ReflectionClass
 {
     use Makeable;
 
-    public static function base(object|string $instance): static
+    public static function base(object|string $class): static
     {
-        $instance = Instance::base($instance) ?? $instance;
+        $instance = Instance::base($class) ?? $class;
 
-        return static::make($instance);
+        return static::make($class);
     }
 }
