@@ -15,7 +15,6 @@
         "composer-runtime-api": "^2.2",
         "illuminate/support": "^12.54",
         "laravel/serializable-closure": "^2.0",
-        "spatie/invade": "^2.1",
         "symfony/filesystem": "^8.0",
         "symfony/finder": "^7.4",
         "symfony/intl": "^8.0",

@@ -77,10 +77,8 @@ trait InteractsWithThrowable
 
     protected static function configurator(): ?Closure
     {
-        $configurator = static::$configurator;
-
-        static::$configurator = null;
-
-        return $configurator;
+        return tap(static::$configurator, function () {
+            static::$configurator = null;
+        });
     }
 }

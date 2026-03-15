@@ -4,8 +4,6 @@ namespace Mpietrucha\Support;
 
 use Mpietrucha\Support\Concerns\Makeable;
 use Mpietrucha\Support\Exception\BadMethodCallException;
-use Mpietrucha\Support\Exception\PendingException;
-use Spatie\Invade\StaticInvader;
 use Throwable;
 
 /**
@@ -52,24 +50,28 @@ class Forward
     {
         $target = $this->target();
 
-        if (Instance::namespace($target) === null) {
+        $namespace = Instance::namespace($target);
+
+        if ($namespace === null) {
             /** @var string $target */
             BadMethodCallException::throw('Invalid forwad target `%s`', $target);
         }
 
         try {
-            $invader = invade($target);
-
             return match (true) {
-                $invader instanceof StaticInvader => $invader->method($method)->call(...$arguments),
-                default => $invader->$method(...$arguments)
+                is_string($target) => $target::$method(...$arguments),
+                is_object($target) => $target->$method(...$arguments),
             };
-        } catch (Throwable $e) {
-            BadMethodCallException::configure(function (PendingException $exception) use ($e) {
-                $exception->previous($e);
-            });
+        } catch (Throwable $exception) {
+            $message = $exception->getMessage();
 
-            BadMethodCallException::throw('Unable to forward call `%s::%s()`', $this->source(), $method);
+            $pattern = sprintf('*Call to undefined method %s::%s*', $namespace, $method);
+
+            if (Str::is($pattern, $message)) {
+                BadMethodCallException::throw('Call to undefined method %s::%s()', $this->source(), $method);
+            }
+
+            throw $exception;
         }
     }
 }
