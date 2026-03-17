@@ -17,9 +17,6 @@ use Throwable;
 
 abstract class Instance
 {
-    /**
-     * @return ($class is object ? class-string : null|class-string)
-     */
     public static function namespace(object|string $class, bool $autoload = true): ?string
     {
         if (is_object($class)) {
@@ -35,6 +32,10 @@ abstract class Instance
             $class = static::namespace($class);
         }
 
+        if ($class === null) {
+            return null;
+        }
+
         /** @var null|string */
         $file = Arr::map(
             ClassLoader::getRegisteredLoaders(),
@@ -48,9 +49,6 @@ abstract class Instance
         return Path::canonicalize($file);
     }
 
-    /**
-     * @return ($class is object ? class-string : null|class-string)
-     */
     public static function base(object|string $class): ?string
     {
         $class = static::namespace($class);
