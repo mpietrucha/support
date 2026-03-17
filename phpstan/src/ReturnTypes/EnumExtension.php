@@ -13,7 +13,7 @@ use PHPStan\Type\DynamicMethodReturnTypeExtension;
 use PHPStan\Type\IntegerType;
 use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
-use PHPStan\Type\UnionType;
+use PHPStan\Type\TypeCombinator;
 
 /**
  * @internal
@@ -36,11 +36,14 @@ final class EnumExtension implements DynamicMethodReturnTypeExtension
             $call->var
         )->getObjectClassReflections() |> Arr::first(...);
 
-        if ($reflection === null || ! $reflection->isEnum()) {
-            return new UnionType([
-                new IntegerType,
-                new StringType,
-            ]);
+        $fallback = TypeCombinator::union(new StringType, new IntegerType);
+
+        if ($reflection === null) {
+            return $fallback;
+        }
+
+        if (! $reflection->isEnum()) {
+            return $fallback;
         }
 
         if (! $reflection->isBackedEnum()) {
