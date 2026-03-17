@@ -11,11 +11,4 @@ use ReflectionClass;
 class Reflection extends ReflectionClass
 {
     use Makeable;
-
-    public static function base(object|string $class): static
-    {
-        $class = Instance::base($class) ?? $class;
-
-        return static::make($class);
-    }
 }

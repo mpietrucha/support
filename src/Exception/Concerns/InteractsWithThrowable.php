@@ -3,82 +3,84 @@
 namespace Mpietrucha\Support\Exception\Concerns;
 
 use Closure;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Mpietrucha\Support\Backtrace;
+use Mpietrucha\Support\Backtrace\Frame;
 use Mpietrucha\Support\Concerns\Creatable;
-use Mpietrucha\Support\Exception\PendingException;
+use Mpietrucha\Support\Exception\Builder;
 use Mpietrucha\Support\Instance;
-use Mpietrucha\Support\Reflection;
+use Mpietrucha\Support\Reflection\ReflectionThrowable;
+use Throwable;
 
 /**
- * @phpstan-require-implements \Throwable
+ * @phpstan-require-implements Throwable
  */
 trait InteractsWithThrowable
 {
     use Creatable;
 
-    protected static ?Closure $configurator = null;
+    protected static ?Closure $buildUsing = null;
 
-    public static function configure(Closure $configurator): void
+    public static function buildUsing(Closure $buildUsing): void
     {
-        static::$configurator = $configurator;
+        static::$buildUsing = $buildUsing;
     }
 
-    public static function build(string $message): static
+    public static function build(?string $message = null, null|bool|float|int|string ...$arguments): static
     {
-        $configurator = static::configurator();
+        $builder = Builder::make();
 
-        if ($configurator === null) {
-            return static::create($message);
-        }
+        $tap = tap(static::$buildUsing, function () {
+            static::$buildUsing = null;
+        });
 
-        return static::create($message, ...PendingException::run($configurator));
+        return static::create(...$builder->build($tap, $message, ...$arguments));
     }
 
-    public static function make(string $message, null|bool|float|int|string ...$arguments): static
+    public static function make(?string $message = null, null|bool|float|int|string ...$arguments): static
     {
-        $backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS) |> collect(...);
+        $backtrace = Backtrace::get(DEBUG_BACKTRACE_IGNORE_ARGS);
 
         $backtrace = $backtrace->pipeThrough([
-            fn (Collection $backtrace) => $backtrace->takeWhile(function (array $frame) {
-                $class = Arr::string($frame, 'class');
+            fn (Collection $backtrace) => $backtrace->takeWhile(function (Frame $frame) {
+                $class = $frame->class();
 
-                return Instance::traits($class)->contains(__TRAIT__);
+                return $class === null || Instance::traits($class)->contains(__TRAIT__);
             }),
             fn (Collection $backtrace) => $backtrace->count() - 1,
         ]) |> $backtrace->skip(...) /** @phpstan-ignore argument.type */;
 
-        $exception = sprintf($message, ...$arguments) |> static::build(...);
+        $exception = static::build($message, ...$arguments);
 
-        $reflection = Reflection::base($exception);
+        if ($backtrace->isEmpty()) {
+            return $exception;
+        }
 
-        $reflection->getProperty($property = 'line')->setValue(
+        $reflection = ReflectionThrowable::make($exception);
+
+        /** @var Frame $frame */
+        $frame = $backtrace->shift();
+
+        $reflection->getLineProperty()->setValue(
             $exception,
-            $backtrace->value($property)
+            $frame->line()
         );
 
-        $reflection->getProperty($property = 'file')->setValue(
+        $reflection->getFileProperty()->setValue(
             $exception,
-            $backtrace->value($property)
+            $frame->file()
         );
 
-        $reflection->getProperty('trace')->setValue(
+        $reflection->getTraceProperty()->setValue(
             $exception,
-            $backtrace->skip(1)->all()
+            $backtrace->toArray()
         );
 
         return $exception;
     }
 
-    public static function throw(string $message, null|bool|float|int|string ...$arguments): never
+    public static function throw(?string $message = null, null|bool|float|int|string ...$arguments): never
     {
         throw static::make($message, ...$arguments);
-    }
-
-    protected static function configurator(): ?Closure
-    {
-        return tap(static::$configurator, function () {
-            static::$configurator = null;
-        });
     }
 }

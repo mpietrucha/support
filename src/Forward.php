@@ -65,9 +65,12 @@ class Forward
         } catch (Throwable $exception) {
             $message = $exception->getMessage();
 
-            $pattern = sprintf('*Call to undefined method %s::%s*', $namespace, $method);
+            $patterns = [
+                sprintf('*Method %s::%s does not exist*', $namespace, $method),
+                sprintf('*Call to undefined method %s::%s*', $namespace, $method),
+            ];
 
-            if (Str::is($pattern, $message)) {
+            if (Str::is($patterns, $message)) {
                 BadMethodCallException::throw('Call to undefined method %s::%s()', $this->source(), $method);
             }
 
