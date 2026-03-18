@@ -131,7 +131,7 @@ abstract class Instance
 
                 $reflection->getMessageProperty()->setValue(
                     $exception,
-                    ($value = function (string $value) use ($indicator, $file, $line) {
+                    ($closure = function (string $value) use ($indicator, $file, $line) {
                         if (Str::doesntContain($value, $indicator)) {
                             return $value;
                         }
@@ -152,12 +152,14 @@ abstract class Instance
 
                 $reflection->getLineProperty()->setValue(
                     $exception,
-                    ($line = function (?int $value, ?string $content) use ($indicator, $source, $line) {
-                        if ($value === null) {
+                    ($line = function (Frame|Throwable $input) use ($indicator, $source, $line) {
+                        $value = $input->getLine();
+
+                        if ($value === null) { /** @phpstan-ignore identical.alwaysFalse */
                             return null;
                         }
 
-                        if (Str::doesntContain((string) $content, $indicator)) {
+                        if (Str::doesntContain((string) $input->getFile(), $indicator)) {
                             return $value;
                         }
 
@@ -166,13 +168,15 @@ abstract class Instance
                         }
 
                         return $value + $line - 2;
-                    })($exception->getLine(), $exception->getMessage())
+                    })($exception)
                 );
 
                 $reflection->getFileProperty()->setValue(
                     $exception,
-                    ($file = function (?string $value) use ($file, $indicator) {
-                        if ($value === null) {
+                    ($file = function (Frame|Throwable $input) use ($file, $indicator) {
+                        $value = $input->getFile();
+
+                        if ($value === null) { /** @phpstan-ignore identical.alwaysFalse */
                             return null;
                         }
 
@@ -181,17 +185,17 @@ abstract class Instance
                         }
 
                         return Str::contains($value, $indicator) ? $file : $value;
-                    })($exception->getFile())
+                    })($exception)
                 );
 
                 $reflection->getTraceProperty()->setValue(
                     $exception,
-                    Backtrace::throwable($exception)->map(function (Frame $frame) use ($line, $file, $value) {
-                        $line = $line($frame->getLine(), $frame->getFile());
+                    Backtrace::throwable($exception)->map(function (Frame $frame) use ($line, $file, $closure) {
+                        $line = $line($frame);
 
-                        $file = $frame->getFile() |> $file(...);
+                        $file = $file($frame);
 
-                        $function = $frame->getFunction() |> $value(...);
+                        $function = $frame->getFunction() |> $closure(...);
 
                         return Frame::build($frame)->setLine($line)->setFile($file)->setFunction($function);
                     })->toArray()
