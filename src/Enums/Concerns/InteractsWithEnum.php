@@ -3,10 +3,10 @@
 namespace Mpietrucha\Support\Enums\Concerns;
 
 use Illuminate\Support\Collection;
-use UnitEnum;
+use Mpietrucha\Support\Enums\Contracts\EnumInterface;
 
 /**
- * @phpstan-require-implements UnitEnum
+ * @phpstan-require-implements EnumInterface
  */
 trait InteractsWithEnum
 {
