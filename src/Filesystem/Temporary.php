@@ -10,14 +10,14 @@ abstract class Temporary
 {
     use UtilizableStrings;
 
-    public static function container(): string
+    public static function bucket(): string
     {
-        return Path::build('mpietrucha-support-temporary-container', static::utilize());
+        return Path::build('mpietrucha-support-temporary-bucket', static::utilize());
     }
 
     public static function flush(): void
     {
-        static::container() |> Filesystem::deleteDirectory(...);
+        static::bucket() |> Filesystem::deleteDirectory(...);
     }
 
     public static function file(?string $name = null, ?string $directory = null): string
@@ -34,7 +34,7 @@ abstract class Temporary
     {
         $path = Path::build(
             Path::join((string) $directory, $name ?? Str::random(32)),
-            static::container()
+            static::bucket()
         );
 
         if (is_string($name)) {
