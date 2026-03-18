@@ -21,6 +21,9 @@ trait InteractsWithThrowable
 
     protected static ?Closure $buildUsing = null;
 
+    /**
+     * @param  Closure(Builder): void  $buildUsing
+     */
     public static function buildUsing(Closure $buildUsing): void
     {
         static::$buildUsing = $buildUsing;
