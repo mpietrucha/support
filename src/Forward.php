@@ -10,7 +10,7 @@ use Throwable;
  * @phpstan-type ForwardTarget object|class-string
  * @phpstan-type ForwardSource class-string
  */
-class Forward
+readonly class Forward
 {
     use Makeable;
 
@@ -18,24 +18,8 @@ class Forward
      * @param  ForwardTarget  $target
      * @param  ForwardSource  $source
      */
-    public function __construct(protected object|string $target, protected string $source)
+    public function __construct(public object|string $target, public string $source)
     {
-    }
-
-    /**
-     * @return ForwardTarget
-     */
-    public function target(): object|string
-    {
-        return $this->target;
-    }
-
-    /**
-     * @return ForwardSource
-     */
-    public function source(): string
-    {
-        return $this->source;
     }
 
     public function get(string $method, mixed ...$arguments): mixed
@@ -48,7 +32,7 @@ class Forward
      */
     public function eval(string $method, iterable $arguments): mixed
     {
-        $target = $this->target();
+        $target = $this->target;
 
         $namespace = Instance::namespace($target);
 
@@ -71,7 +55,7 @@ class Forward
             ];
 
             if (Str::is($patterns, $message)) {
-                BadMethodCallException::throw('Call to undefined method %s::%s()', $this->source(), $method);
+                BadMethodCallException::throw('Call to undefined method %s::%s()', $this->source, $method);
             }
 
             throw $exception;

@@ -17,21 +17,21 @@ class ReflectionThrowable extends Reflection
 
     public function getLineProperty(): ReflectionProperty
     {
-        return Property::Line->value() |> $this->getProperty(...);
+        return Property::Line->value |> $this->getProperty(...);
     }
 
     public function getFileProperty(): ReflectionProperty
     {
-        return Property::File->value() |> $this->getProperty(...);
+        return Property::File->value |> $this->getProperty(...);
     }
 
     public function getTraceProperty(): ReflectionProperty
     {
-        return Property::Trace->value() |> $this->getProperty(...);
+        return Property::Trace->value |> $this->getProperty(...);
     }
 
     public function getMessageProperty(): ReflectionProperty
     {
-        return Property::Message->value() |> $this->getProperty(...);
+        return Property::Message->value |> $this->getProperty(...);
     }
 }

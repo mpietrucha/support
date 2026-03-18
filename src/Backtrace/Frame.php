@@ -87,7 +87,7 @@ class Frame implements Arrayable
 
     protected function get(Property $property): mixed
     {
-        $property = $property->value();
+        $property = $property->value;
 
         $frame = $this->toArray();
 

@@ -3,10 +3,9 @@
 namespace Mpietrucha\Support\Backtrace\Frame;
 
 use Mpietrucha\Support\Enums\Concerns\InteractsWithEnum;
-use Mpietrucha\Support\Enums\Contracts\EnumInterface;
 use Mpietrucha\Support\Str;
 
-enum Property: string implements EnumInterface
+enum Property: string
 {
     use InteractsWithEnum;
 

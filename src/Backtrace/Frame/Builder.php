@@ -25,7 +25,7 @@ class Builder implements Arrayable
     {
         $frame = $frame?->toArray() ?? Property::collection()
             ->keyBy
-            ->value()
+            ->value
             ->map
             ->none()
             ->all();
@@ -90,7 +90,7 @@ class Builder implements Arrayable
         $frame = $this->toArray();
 
         /** @var BacktraceFrame $frame */
-        $frame = Arr::set($frame, $property->value(), $value);
+        $frame = Arr::set($frame, $property->value, $value);
 
         $this->frame = $frame;
 
