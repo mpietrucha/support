@@ -23,21 +23,21 @@ class Builder implements Arrayable
 
     protected ?Throwable $previous = null;
 
-    public function message(string $message, null|bool|float|int|string ...$arguments): static
+    public function setMessage(string $message, null|bool|float|int|string ...$arguments): static
     {
         $this->message = sprintf($message, ...$arguments);
 
         return $this;
     }
 
-    public function line(int $line): static
+    public function setLine(int $line): static
     {
         $this->line = $line;
 
         return $this;
     }
 
-    public function previous(Throwable $previous): static
+    public function setPrevious(Throwable $previous): static
     {
         $this->previous = $previous;
 
@@ -66,7 +66,7 @@ class Builder implements Arrayable
         }
 
         if ($message) {
-            $this->message($message, ...$arguments);
+            $this->setMessage($message, ...$arguments);
         }
 
         return $this->toArray();

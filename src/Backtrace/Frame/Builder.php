@@ -34,17 +34,17 @@ class Builder implements Arrayable
         $this->frame = $frame;
     }
 
-    public function file(?string $file): static
+    public function setFile(?string $file): static
     {
         return $this->set(Property::File, $file);
     }
 
-    public function line(?int $line): static
+    public function setLine(?int $line): static
     {
         return $this->set(Property::Line, $line);
     }
 
-    public function type(?string $type): static
+    public function setType(?string $type): static
     {
         return $this->set(Property::Type, $type);
     }
@@ -52,22 +52,22 @@ class Builder implements Arrayable
     /**
      * @param  null|list<mixed>  $args
      */
-    public function args(?array $args): static
+    public function setArgs(?array $args): static
     {
         return $this->set(Property::Args, $args);
     }
 
-    public function class(?string $class): static
+    public function setClass(?string $class): static
     {
         return $this->set(Property::ClassName, $class);
     }
 
-    public function object(?object $object): static
+    public function setObject(?object $object): static
     {
         return $this->set(Property::Object, $object);
     }
 
-    public function function(string $function): static
+    public function setFunction(string $function): static
     {
         return $this->set(Property::Function, $function);
     }

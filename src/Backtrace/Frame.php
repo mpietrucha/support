@@ -37,19 +37,19 @@ class Frame implements Arrayable
         return $this->frame;
     }
 
-    public function file(): ?string
+    public function getFile(): ?string
     {
         /** @var null|string */
         return Property::File |> $this->get(...);
     }
 
-    public function line(): ?int
+    public function getLine(): ?int
     {
         /** @var null|int */
         return Property::Line |> $this->get(...);
     }
 
-    public function type(): ?string
+    public function getType(): ?string
     {
         /** @var null|string */
         return Property::Type |> $this->get(...);
@@ -58,7 +58,7 @@ class Frame implements Arrayable
     /**
      * @return null|array<mixed>
      */
-    public function args(): ?array
+    public function getArgs(): ?array
     {
         /** @var null|array<mixed> */
         return Property::Args |> $this->get(...);
@@ -67,19 +67,19 @@ class Frame implements Arrayable
     /**
      * @return null|class-string
      */
-    public function class(): ?string
+    public function getClass(): ?string
     {
         /** @var null|class-string */
         return Property::ClassName |> $this->get(...);
     }
 
-    public function object(): ?object
+    public function getObject(): ?object
     {
         /** @var null|object */
         return Property::Object |> $this->get(...);
     }
 
-    public function function(): string
+    public function getFunction(): string
     {
         /** @var string */
         return Property::Function |> $this->get(...);

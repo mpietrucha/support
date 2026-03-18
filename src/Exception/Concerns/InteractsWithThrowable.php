@@ -43,7 +43,7 @@ trait InteractsWithThrowable
 
         $backtrace = $backtrace->pipeThrough([
             fn (Collection $backtrace) => $backtrace->takeWhile(function (Frame $frame) {
-                $class = $frame->class();
+                $class = $frame->getClass();
 
                 return $class === null || Instance::traits($class)->contains(__TRAIT__);
             }),
@@ -63,12 +63,12 @@ trait InteractsWithThrowable
 
         $reflection->getLineProperty()->setValue(
             $exception,
-            $frame->line()
+            $frame->getLine()
         );
 
         $reflection->getFileProperty()->setValue(
             $exception,
-            $frame->file()
+            $frame->getFile()
         );
 
         $reflection->getTraceProperty()->setValue(

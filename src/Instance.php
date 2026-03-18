@@ -125,61 +125,75 @@ abstract class Instance
                     $closure->getName()
                 )->getStartLine() ?? $closure->getStartLine();
 
-                $indicator = ClosureStream::STREAM_PROTO;
-
                 $reflection = ReflectionThrowable::make($exception);
 
-                $reflection->getLineProperty()->setValue(
-                    $exception,
-                    (function () use ($exception, $indicator, $line, $source) {
-                        $value = $exception->getLine();
-
-                        if (Str::doesntContain($exception->getMessage(), $indicator)) {
-                            return $value;
-                        }
-
-                        if ($source === null) {
-                            return $line;
-                        }
-
-                        return $line + $value - 2;
-                    })()
-                );
+                $indicator = ClosureStream::STREAM_PROTO;
 
                 $reflection->getMessageProperty()->setValue(
                     $exception,
-                    (function () use ($exception, $indicator, $file, $line) {
-                        $value = $exception->getMessage();
-
+                    ($value = function (string $value) use ($indicator, $file, $line) {
                         if (Str::doesntContain($value, $indicator)) {
                             return $value;
                         }
 
-                        $code = Str::between($value, 'closure:', '}');
+                        if ($file === false) {
+                            return $value;
+                        }
 
-                        return Str::replace($code, sprintf('%s:%s', $file, $line), $value);
-                    })()
+                        $closure = Str::between($value, 'closure:', '}');
+
+                        if ($closure === $value) {
+                            return $value;
+                        }
+
+                        return Str::replace($closure, sprintf('%s::%s', $file, $line), $value);
+                    })($exception->getMessage())
+                );
+
+                $reflection->getLineProperty()->setValue(
+                    $exception,
+                    ($line = function (?int $value, ?string $content) use ($indicator, $source, $line) {
+                        if ($value === null) {
+                            return null;
+                        }
+
+                        if (Str::doesntContain((string) $content, $indicator)) {
+                            return $value;
+                        }
+
+                        if ($source === null) {
+                            return $value;
+                        }
+
+                        return $value + $line - 2;
+                    })($exception->getLine(), $exception->getMessage())
                 );
 
                 $reflection->getFileProperty()->setValue(
                     $exception,
-                    (function () use ($exception, $indicator, $file) {
-                        $value = $exception->getFile();
+                    ($file = function (?string $value) use ($file, $indicator) {
+                        if ($value === null) {
+                            return null;
+                        }
+
+                        if ($file === false) {
+                            return $value;
+                        }
 
                         return Str::contains($value, $indicator) ? $file : $value;
-                    })()
+                    })($exception->getFile())
                 );
 
                 $reflection->getTraceProperty()->setValue(
                     $exception,
-                    Backtrace::throwable($exception)->map(function (Frame $frame) use ($indicator, $file, $line) {
-                        $function = $frame->function();
+                    Backtrace::throwable($exception)->map(function (Frame $frame) use ($line, $file, $value) {
+                        $line = $line($frame->getLine(), $frame->getFile());
 
-                        if (Str::doesntContain($function, $indicator)) {
-                            return $frame;
-                        }
+                        $file = $frame->getFile() |> $file(...);
 
-                        return sprintf('{closure:%s:%s}', $file, $line) |> Frame::build($frame)->function(...);
+                        $function = $frame->getFunction() |> $value(...);
+
+                        return Frame::build($frame)->setLine($line)->setFile($file)->setFunction($function);
                     })->toArray()
                 );
 
