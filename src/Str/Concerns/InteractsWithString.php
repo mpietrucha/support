@@ -2,7 +2,7 @@
 
 namespace Mpietrucha\Support\Str\Concerns;
 
-trait InteractsWithSymbols
+trait InteractsWithString
 {
     public static function eol(): string
     {
@@ -42,5 +42,10 @@ trait InteractsWithSymbols
     public static function dash(): string
     {
         return '-';
+    }
+
+    public static function nullWhenEmpty(string $value): ?string
+    {
+        return $value === '' ? null : $value;
     }
 }

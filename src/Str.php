@@ -2,9 +2,9 @@
 
 namespace Mpietrucha\Support;
 
-use Mpietrucha\Support\Str\Concerns\InteractsWithSymbols;
+use Mpietrucha\Support\Str\Concerns\InteractsWithString;
 
 abstract class Str extends \Illuminate\Support\Str
 {
-    use InteractsWithSymbols;
+    use InteractsWithString;
 }
