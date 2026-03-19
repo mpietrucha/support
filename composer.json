@@ -49,13 +49,6 @@
         "optimize-autoloader": true,
         "sort-packages": true
     },
-    "extra": {
-        "phpstan": {
-            "includes": [
-                "extension.neon"
-            ]
-        }
-    },
     "scripts": {
         "post-update-cmd": [
             "@composer normalize"
