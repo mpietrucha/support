@@ -6,6 +6,7 @@ use Mpietrucha\Support\Filesystem\Path;
 use Rector\CodingStyle\Rector\ArrowFunction\StaticArrowFunctionRector;
 use Rector\CodingStyle\Rector\Closure\StaticClosureRector;
 use Rector\Config\RectorConfig;
+use Rector\DeadCode\Rector\ClassMethod\RemoveUselessParamTagRector;
 use Rector\DeadCode\Rector\Expression\RemoveDeadStmtRector;
 use Rector\DeadCode\Rector\Node\RemoveNonExistingVarAnnotationRector;
 
@@ -15,6 +16,7 @@ return RectorConfig::configure()
         Path::get('src'),
     ])
     ->withSkip([
+        RemoveUselessParamTagRector::class,
         RemoveDeadStmtRector::class,
         RemoveNonExistingVarAnnotationRector::class,
     ])
