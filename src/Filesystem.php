@@ -78,7 +78,7 @@ abstract class Filesystem
         /** @var null|string */
         return Arr::map(
             ClassLoader::getRegisteredLoaders(),
-            fn (ClassLoader $loader) => array_find_key(
+            static fn (ClassLoader $loader) => array_find_key(
                 $loader->getClassMap(),
                 fn (string $file) => Path::canonicalize($file) === $path
             )

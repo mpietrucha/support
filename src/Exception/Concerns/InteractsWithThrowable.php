@@ -45,12 +45,12 @@ trait InteractsWithThrowable
         $backtrace = Backtrace::get(DEBUG_BACKTRACE_IGNORE_ARGS);
 
         $backtrace = $backtrace->pipeThrough([
-            fn (Collection $backtrace) => $backtrace->takeWhile(function (Frame $frame) {
+            static fn (Collection $backtrace) => $backtrace->takeWhile(function (Frame $frame) {
                 $class = $frame->getClass();
 
                 return $class === null || Instance::traits($class)->contains(__TRAIT__);
             }),
-            fn (Collection $backtrace) => $backtrace->count() - 1,
+            static fn (Collection $backtrace) => $backtrace->count() - 1,
         ]) |> $backtrace->skip(...) /** @phpstan-ignore argument.type */;
 
         $exception = static::build($message, ...$arguments);

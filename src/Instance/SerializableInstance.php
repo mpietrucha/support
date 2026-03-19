@@ -11,6 +11,6 @@ class SerializableInstance extends SerializableClosure
 
     public function __construct(object $instance)
     {
-        parent::__construct(fn () => $instance);
+        parent::__construct(static fn () => $instance);
     }
 }

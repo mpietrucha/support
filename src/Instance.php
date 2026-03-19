@@ -38,7 +38,7 @@ abstract class Instance
         /** @var null|string */
         $file = Arr::map(
             ClassLoader::getRegisteredLoaders(),
-            fn (ClassLoader $loader) => $loader->findFile($class) ?: null
+            static fn (ClassLoader $loader) => $loader->findFile($class) ?: null
         ) |> Arr::whereNotNull(...) |> Arr::first(...);
 
         if ($file === null) {
