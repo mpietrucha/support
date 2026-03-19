@@ -8,7 +8,7 @@ use UnitEnum;
 interface EnumInterface extends UnitEnum
 {
     /**
-     * @return Collection<int, static>
+     * @return Collection<int, self>
      */
     public static function collection(): Collection;
 
