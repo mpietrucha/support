@@ -18,13 +18,12 @@ abstract class Enum
      */
     public static function backed(mixed $enum, ?string $class = null): string
     {
-        $enum = static::unit($enum);
+        $enum = static::unit($enum, $class);
 
         if (! is_a($enum, BackedEnum::class, true)) {
             InvalidArgumentException::throw('Enum `%s` is not BackedEnum', $enum);
         }
 
-        /** @phpstan-ignore return.type */
         return $enum;
     }
 
