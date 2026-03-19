@@ -108,7 +108,7 @@ abstract class Instance
 
         $bound = $unbound->bindTo($context, $scope);
 
-        return function (mixed ...$arguments) use ($bound, $closure, $source) {
+        return static function (mixed ...$arguments) use ($bound, $closure, $source) {
             try {
                 return $bound(...$arguments);
             } catch (Throwable $exception) {
@@ -131,7 +131,7 @@ abstract class Instance
 
                 $reflection->getMessageProperty()->setValue(
                     $exception,
-                    ($closure = function (string $value) use ($indicator, $file, $line) {
+                    ($closure = static function (string $value) use ($indicator, $file, $line) {
                         if (Str::doesntContain($value, $indicator)) {
                             return $value;
                         }
@@ -152,7 +152,7 @@ abstract class Instance
 
                 $reflection->getLineProperty()->setValue(
                     $exception,
-                    ($line = function (Frame|Throwable $input) use ($indicator, $source, $line) {
+                    ($line = static function (Frame|Throwable $input) use ($indicator, $source, $line) {
                         $value = $input->getLine();
 
                         if ($value === null) { /** @phpstan-ignore identical.alwaysFalse */
@@ -173,7 +173,7 @@ abstract class Instance
 
                 $reflection->getFileProperty()->setValue(
                     $exception,
-                    ($file = function (Frame|Throwable $input) use ($file, $indicator) {
+                    ($file = static function (Frame|Throwable $input) use ($file, $indicator) {
                         $value = $input->getFile();
 
                         if ($value === null) { /** @phpstan-ignore identical.alwaysFalse */
@@ -190,7 +190,7 @@ abstract class Instance
 
                 $reflection->getTraceProperty()->setValue(
                     $exception,
-                    Backtrace::throwable($exception)->map(function (Frame $frame) use ($line, $file, $closure) {
+                    Backtrace::throwable($exception)->map(static function (Frame $frame) use ($line, $file, $closure) {
                         $line = $line($frame);
 
                         $file = $file($frame);

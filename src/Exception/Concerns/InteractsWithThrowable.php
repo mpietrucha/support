@@ -33,7 +33,7 @@ trait InteractsWithThrowable
     {
         $builder = Builder::make();
 
-        $tap = tap(static::$buildUsing, function () {
+        $tap = tap(static::$buildUsing, static function () {
             static::$buildUsing = null;
         });
 
@@ -45,7 +45,7 @@ trait InteractsWithThrowable
         $backtrace = Backtrace::get(DEBUG_BACKTRACE_IGNORE_ARGS);
 
         $backtrace = $backtrace->pipeThrough([
-            static fn (Collection $backtrace) => $backtrace->takeWhile(function (Frame $frame) {
+            static fn (Collection $backtrace) => $backtrace->takeWhile(static function (Frame $frame) {
                 $class = $frame->getClass();
 
                 return $class === null || Instance::traits($class)->contains(__TRAIT__);
