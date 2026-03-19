@@ -37,9 +37,9 @@ class Builder implements Arrayable
         return $this;
     }
 
-    public function setPrevious(Throwable $previous): static
+    public function setPrevious(Throwable $throwable): static
     {
-        $this->previous = $previous;
+        $this->previous = $throwable;
 
         return $this;
     }
@@ -61,7 +61,7 @@ class Builder implements Arrayable
      */
     public function build(?Closure $tap = null, ?string $message = null, null|bool|float|int|string ...$arguments): array
     {
-        if ($tap) {
+        if ($tap instanceof Closure) {
             $tap($this);
         }
 

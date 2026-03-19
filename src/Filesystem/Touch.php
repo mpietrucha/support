@@ -9,12 +9,12 @@ abstract class Touch
 {
     public static function file(string $path, ?string $directory = null): string
     {
-        $file = static::build($path, $directory);
+        $stringableFile = static::build($path, $directory);
 
-        Path::directory(...) |> $file->pipe(...) |> static::directory(...);
+        Path::directory(...) |> $stringableFile->pipe(...) |> static::directory(...);
 
         /** @phpstan-ignore argument.type */
-        return Filesystem::touch(...) |> $file->tap(...) |> static::normalize(...);
+        return Filesystem::touch(...) |> $stringableFile->tap(...) |> static::normalize(...);
     }
 
     public static function directory(string $path, ?string $directory = null): string

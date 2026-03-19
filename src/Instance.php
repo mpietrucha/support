@@ -8,6 +8,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Laravel\SerializableClosure\Support\ClosureStream;
 use Mpietrucha\Support\Backtrace\Frame;
+use Mpietrucha\Support\Backtrace\Frame\Builder;
 use Mpietrucha\Support\Exception\RuntimeException;
 use Mpietrucha\Support\Filesystem\Path;
 use Mpietrucha\Support\Instance\SerializableInstance;
@@ -23,7 +24,7 @@ abstract class Instance
     public static function namespace(object|string $class, bool $autoload = true): ?string
     {
         if (is_object($class)) {
-            return get_class($class);
+            return $class::class;
         }
 
         return class_exists($class, $autoload) ? $class : null;
@@ -38,7 +39,7 @@ abstract class Instance
         /** @var null|string */
         $file = Arr::map(
             ClassLoader::getRegisteredLoaders(),
-            static fn (ClassLoader $loader) => $loader->findFile($class) ?: null
+            static fn (ClassLoader $classLoader): ?string => $classLoader->findFile($class) ?: null
         ) |> Arr::whereNotNull(...) |> Arr::first(...);
 
         if ($file === null) {
@@ -111,7 +112,7 @@ abstract class Instance
         return static function (mixed ...$arguments) use ($bound, $closure, $source) {
             try {
                 return $bound(...$arguments);
-            } catch (Throwable $exception) {
+            } catch (Throwable $throwable) {
                 $closure = ReflectionClosure::make($closure);
 
                 $source = match (true) {
@@ -125,12 +126,12 @@ abstract class Instance
                     $closure->getName()
                 )->getStartLine() ?? $closure->getStartLine();
 
-                $reflection = ReflectionThrowable::make($exception);
+                $reflection = ReflectionThrowable::make($throwable);
 
                 $indicator = ClosureStream::STREAM_PROTO;
 
                 $reflection->getMessageProperty()->setValue(
-                    $exception,
+                    $throwable,
                     ($closure = static function (string $value) use ($indicator, $file, $line) {
                         if (Str::doesntContain($value, $indicator)) {
                             return $value;
@@ -147,12 +148,12 @@ abstract class Instance
                         }
 
                         return Str::replace($closure, sprintf('%s::%s', $file, $line), $value);
-                    })($exception->getMessage())
+                    })($throwable->getMessage())
                 );
 
                 $reflection->getLineProperty()->setValue(
-                    $exception,
-                    ($line = static function (Frame|Throwable $input) use ($indicator, $source, $line) {
+                    $throwable,
+                    ($line = static function (Frame|Throwable $input) use ($indicator, $source, $line): ?int {
                         $value = $input->getLine();
 
                         if ($value === null) { /** @phpstan-ignore identical.alwaysFalse */
@@ -168,11 +169,11 @@ abstract class Instance
                         }
 
                         return $value + $line - 2;
-                    })($exception)
+                    })($throwable)
                 );
 
                 $reflection->getFileProperty()->setValue(
-                    $exception,
+                    $throwable,
                     ($file = static function (Frame|Throwable $input) use ($file, $indicator) {
                         $value = $input->getFile();
 
@@ -185,12 +186,12 @@ abstract class Instance
                         }
 
                         return Str::contains($value, $indicator) ? $file : $value;
-                    })($exception)
+                    })($throwable)
                 );
 
                 $reflection->getTraceProperty()->setValue(
-                    $exception,
-                    Backtrace::throwable($exception)->map(static function (Frame $frame) use ($line, $file, $closure) {
+                    $throwable,
+                    Backtrace::throwable($throwable)->map(static function (Frame $frame) use ($line, $file, $closure): Builder {
                         $line = $line($frame);
 
                         $file = $file($frame);
@@ -201,7 +202,7 @@ abstract class Instance
                     })->toArray()
                 );
 
-                throw $exception;
+                throw $throwable;
             }
         };
     }

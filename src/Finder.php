@@ -2,12 +2,11 @@
 
 namespace Mpietrucha\Support;
 
-use Countable;
 use Illuminate\Support\LazyCollection;
 use Mpietrucha\Support\Concerns\Makeable;
 use Symfony\Component\Finder\SplFileInfo;
 
-class Finder extends \Symfony\Component\Finder\Finder implements Countable
+class Finder extends \Symfony\Component\Finder\Finder
 {
     use Makeable;
 
@@ -17,10 +16,5 @@ class Finder extends \Symfony\Component\Finder\Finder implements Countable
     public function get(): LazyCollection
     {
         return LazyCollection::make($this);
-    }
-
-    public function count(): int
-    {
-        return $this->get()->count();
     }
 }

@@ -18,7 +18,7 @@ abstract class Extension
 
     public static function get(string $path): ?string
     {
-        if (static::unexists($path)) {
+        if (self::unexists($path)) {
             return null;
         }
 

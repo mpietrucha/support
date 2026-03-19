@@ -46,8 +46,8 @@ readonly class Forward
                 is_string($target) => $target::$method(...$arguments),
                 is_object($target) => $target->$method(...$arguments),
             };
-        } catch (Throwable $exception) {
-            $message = $exception->getMessage();
+        } catch (Throwable $throwable) {
+            $message = $throwable->getMessage();
 
             $patterns = [
                 sprintf('*Method %s::%s does not exist*', $namespace, $method),
@@ -58,7 +58,7 @@ readonly class Forward
                 BadMethodCallException::throw('Call to undefined method %s::%s()', $this->source, $method);
             }
 
-            throw $exception;
+            throw $throwable;
         }
     }
 }

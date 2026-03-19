@@ -56,7 +56,7 @@ abstract class Filesystem
 
     public static function snapshot(string $path, string $algorithm = 'md5'): ?string
     {
-        if (static::unexists($path)) {
+        if (self::unexists($path)) {
             return null;
         }
 
@@ -78,9 +78,9 @@ abstract class Filesystem
         /** @var null|string */
         return Arr::map(
             ClassLoader::getRegisteredLoaders(),
-            static fn (ClassLoader $loader) => array_find_key(
-                $loader->getClassMap(),
-                fn (string $file) => Path::canonicalize($file) === $path
+            static fn (ClassLoader $classLoader): ?string => array_find_key(
+                $classLoader->getClassMap(),
+                static fn (string $file): bool => Path::canonicalize($file) === $path
             )
         ) |> Arr::whereNotNull(...) |> Arr::first(...);
     }

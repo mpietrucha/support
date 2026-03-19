@@ -14,7 +14,7 @@ abstract class Context
 
     public static function console(): bool
     {
-        return in_array(php_sapi_name(), static::consoles());
+        return in_array(PHP_SAPI, static::consoles());
     }
 
     final public static function web(): bool

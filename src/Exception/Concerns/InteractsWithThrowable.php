@@ -33,7 +33,7 @@ trait InteractsWithThrowable
     {
         $builder = Builder::make();
 
-        $tap = tap(static::$buildUsing, static function () {
+        $tap = tap(static::$buildUsing, static function (): void {
             static::$buildUsing = null;
         });
 
@@ -45,12 +45,12 @@ trait InteractsWithThrowable
         $backtrace = Backtrace::get(DEBUG_BACKTRACE_IGNORE_ARGS);
 
         $backtrace = $backtrace->pipeThrough([
-            static fn (Collection $backtrace) => $backtrace->takeWhile(static function (Frame $frame) {
+            static fn (Collection $backtrace) => $backtrace->takeWhile(static function (Frame $frame): bool {
                 $class = $frame->getClass();
 
                 return $class === null || Instance::traits($class)->contains(__TRAIT__);
             }),
-            static fn (Collection $backtrace) => $backtrace->count() - 1,
+            static fn (Collection $backtrace): int => $backtrace->count() - 1,
         ]) |> $backtrace->skip(...) /** @phpstan-ignore argument.type */;
 
         $exception = static::build($message, ...$arguments);
@@ -59,22 +59,22 @@ trait InteractsWithThrowable
             return $exception;
         }
 
-        $reflection = ReflectionThrowable::make($exception);
+        $reflectionThrowable = ReflectionThrowable::make($exception);
 
         /** @var Frame $frame */
         $frame = $backtrace->shift();
 
-        $reflection->getLineProperty()->setValue(
+        $reflectionThrowable->getLineProperty()->setValue(
             $exception,
             $frame->getLine()
         );
 
-        $reflection->getFileProperty()->setValue(
+        $reflectionThrowable->getFileProperty()->setValue(
             $exception,
             $frame->getFile()
         );
 
-        $reflection->getTraceProperty()->setValue(
+        $reflectionThrowable->getTraceProperty()->setValue(
             $exception,
             $backtrace->toArray()
         );

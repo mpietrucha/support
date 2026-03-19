@@ -26,7 +26,9 @@ abstract class Backtrace
      */
     public static function get(int $options = DEBUG_BACKTRACE_PROVIDE_OBJECT, int $limit = 0): Collection
     {
-        $limit > 0 && $limit++;
+        if ($limit > 0) {
+            $limit++;
+        }
 
         return array_slice(debug_backtrace($options, $limit), 1) |> static::build(...);
     }
