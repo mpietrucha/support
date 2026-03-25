@@ -4,7 +4,7 @@ namespace Mpietrucha\Support;
 
 use Mpietrucha\Support\Filesystem\Path as FilesystemPath;
 
-abstract class ClassPath
+abstract class ClassNamespace
 {
     public static function delimiter(): string
     {
@@ -26,7 +26,7 @@ abstract class ClassPath
         return FilesystemPath::normalize($namespace) |> FilesystemPath::name(...);
     }
 
-    public static function namespace(string $namespace, ?int $level = null): string
+    public static function parent(string $namespace, ?int $level = null): string
     {
         return FilesystemPath::directory($namespace, $level) |> static::normalize(...);
     }
