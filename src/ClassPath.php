@@ -1,9 +1,8 @@
 <?php
 
-namespace Mpietrucha\Support\Instance;
+namespace Mpietrucha\Support;
 
 use Mpietrucha\Support\Filesystem\Path as FilesystemPath;
-use Mpietrucha\Support\Str;
 
 abstract class ClassPath
 {
@@ -22,12 +21,12 @@ abstract class ClassPath
         return static::join(static::delimiter(), $namespace);
     }
 
-    public static function namespace(string $namespace): string
+    public static function name(string $namespace): string
     {
         return FilesystemPath::normalize($namespace) |> FilesystemPath::name(...);
     }
 
-    public static function get(string $namespace, ?int $level = null): string
+    public static function namespace(string $namespace, ?int $level = null): string
     {
         return FilesystemPath::directory($namespace, $level) |> static::normalize(...);
     }
