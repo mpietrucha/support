@@ -1,12 +1,12 @@
 <?php
 
-namespace Mpietrucha\Support\Backtrace\Frame;
+namespace Mpietrucha\Support\Backtrace;
 
 use Mpietrucha\Support\Enums\Concerns\InteractsWithEnum;
 use Mpietrucha\Support\Enums\Contracts\EnumInterface;
 use Mpietrucha\Support\Str;
 
-enum Property: string implements EnumInterface
+enum FrameProperty: string implements EnumInterface
 {
     use InteractsWithEnum;
 

@@ -2,7 +2,7 @@
 
 namespace Mpietrucha\Support\Reflection;
 
-use Mpietrucha\Support\Exception\Property;
+use Mpietrucha\Support\Exception\ThrowableProperty;
 use Mpietrucha\Support\Instance;
 use Mpietrucha\Support\Reflection;
 use ReflectionProperty;
@@ -17,21 +17,21 @@ class ReflectionThrowable extends Reflection
 
     public function getLineProperty(): ReflectionProperty
     {
-        return Property::Line->value |> $this->getProperty(...);
+        return ThrowableProperty::Line->value |> $this->getProperty(...);
     }
 
     public function getFileProperty(): ReflectionProperty
     {
-        return Property::File->value |> $this->getProperty(...);
+        return ThrowableProperty::File->value |> $this->getProperty(...);
     }
 
     public function getTraceProperty(): ReflectionProperty
     {
-        return Property::Trace->value |> $this->getProperty(...);
+        return ThrowableProperty::Trace->value |> $this->getProperty(...);
     }
 
     public function getMessageProperty(): ReflectionProperty
     {
-        return Property::Message->value |> $this->getProperty(...);
+        return ThrowableProperty::Message->value |> $this->getProperty(...);
     }
 }

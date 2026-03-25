@@ -8,7 +8,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Laravel\SerializableClosure\Support\ClosureStream;
 use Mpietrucha\Support\Backtrace\Frame;
-use Mpietrucha\Support\Backtrace\Frame\Builder;
+use Mpietrucha\Support\Backtrace\FrameBuilder;
 use Mpietrucha\Support\Exception\RuntimeException;
 use Mpietrucha\Support\Filesystem\Path;
 use Mpietrucha\Support\Instance\SerializableInstance;
@@ -191,7 +191,7 @@ abstract class Instance
 
                 $reflection->getTraceProperty()->setValue(
                     $throwable,
-                    Backtrace::throwable($throwable)->map(static function (Frame $frame) use ($line, $file, $closure): Builder {
+                    Backtrace::throwable($throwable)->map(static function (Frame $frame) use ($line, $file, $closure): FrameBuilder {
                         $line = $line($frame);
 
                         $file = $file($frame);

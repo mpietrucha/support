@@ -4,8 +4,6 @@ namespace Mpietrucha\Support\Backtrace;
 
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Arr;
-use Mpietrucha\Support\Backtrace\Frame\Builder;
-use Mpietrucha\Support\Backtrace\Frame\Property;
 use Mpietrucha\Support\Concerns\Makeable;
 
 /**
@@ -24,9 +22,9 @@ class Frame implements Arrayable
     {
     }
 
-    public static function build(?Frame $frame = null): Builder
+    public static function build(?Frame $frame = null): FrameBuilder
     {
-        return Builder::make($frame);
+        return FrameBuilder::make($frame);
     }
 
     /**
@@ -40,19 +38,19 @@ class Frame implements Arrayable
     public function getFile(): ?string
     {
         /** @var null|string */
-        return Property::File |> $this->get(...);
+        return FrameProperty::File |> $this->get(...);
     }
 
     public function getLine(): ?int
     {
         /** @var null|int */
-        return Property::Line |> $this->get(...);
+        return FrameProperty::Line |> $this->get(...);
     }
 
     public function getType(): ?string
     {
         /** @var null|string */
-        return Property::Type |> $this->get(...);
+        return FrameProperty::Type |> $this->get(...);
     }
 
     /**
@@ -61,7 +59,7 @@ class Frame implements Arrayable
     public function getArgs(): ?array
     {
         /** @var null|array<mixed> */
-        return Property::Args |> $this->get(...);
+        return FrameProperty::Args |> $this->get(...);
     }
 
     /**
@@ -70,27 +68,27 @@ class Frame implements Arrayable
     public function getClass(): ?string
     {
         /** @var null|class-string */
-        return Property::ClassName |> $this->get(...);
+        return FrameProperty::ClassName |> $this->get(...);
     }
 
     public function getObject(): ?object
     {
         /** @var null|object */
-        return Property::Object |> $this->get(...);
+        return FrameProperty::Object |> $this->get(...);
     }
 
     public function getFunction(): string
     {
         /** @var string */
-        return Property::Function |> $this->get(...);
+        return FrameProperty::Function |> $this->get(...);
     }
 
-    protected function get(Property $property): mixed
+    protected function get(FrameProperty $frameProperty): mixed
     {
-        $property = $property->value;
+        $frameProperty = $frameProperty->value;
 
         $frame = $this->toArray();
 
-        return Arr::get($frame, $property);
+        return Arr::get($frame, $frameProperty);
     }
 }

@@ -6,8 +6,7 @@ use Closure;
 use Illuminate\Support\Collection;
 use Mpietrucha\Support\Backtrace;
 use Mpietrucha\Support\Backtrace\Frame;
-use Mpietrucha\Support\Concerns\Creatable;
-use Mpietrucha\Support\Exception\Builder;
+use Mpietrucha\Support\Exception\ThrowableBuilder;
 use Mpietrucha\Support\Instance;
 use Mpietrucha\Support\Reflection\ReflectionThrowable;
 use Throwable;
@@ -17,27 +16,23 @@ use Throwable;
  */
 trait InteractsWithThrowable
 {
-    use Creatable;
-
-    protected static ?Closure $buildUsing = null;
-
     /**
-     * @param  Closure(Builder): void  $buildUsing
+     * @param  Closure(ThrowableBuilder): void  $buildUsing
      */
     public static function buildUsing(Closure $buildUsing): void
     {
-        static::$buildUsing = $buildUsing;
+        ThrowableBuilder::buildUsing($buildUsing);
     }
 
     public static function build(?string $message = null, null|bool|float|int|string ...$arguments): static
     {
-        $builder = Builder::make();
+        $throwableBuilder = ThrowableBuilder::make();
 
-        $tap = tap(static::$buildUsing, static function (): void {
-            static::$buildUsing = null;
-        });
+        if ($message) {
+            $throwableBuilder->setMessage($message, ...$arguments);
+        }
 
-        return static::create(...$builder->build($tap, $message, ...$arguments));
+        return $throwableBuilder->build(static::class);
     }
 
     public static function make(?string $message = null, null|bool|float|int|string ...$arguments): static

@@ -10,10 +10,8 @@ use Throwable;
 
 /**
  * @implements Arrayable<int, mixed>
- *
- * @phpstan-type ThrowableArray array{string, int, null|Throwable}
  */
-class Builder implements Arrayable
+class ThrowableBuilder implements Arrayable
 {
     use Makeable;
 
@@ -22,6 +20,13 @@ class Builder implements Arrayable
     protected int $line = 0;
 
     protected ?Throwable $previous = null;
+
+    protected static ?Closure $buildUsing = null;
+
+    public static function buildUsing(Closure $buildUsing): void
+    {
+        static::$buildUsing = $buildUsing;
+    }
 
     public function setMessage(string $message, null|bool|float|int|string ...$arguments): static
     {
@@ -45,7 +50,7 @@ class Builder implements Arrayable
     }
 
     /**
-     * @return ThrowableArray
+     * @return array{string, int, null|Throwable}
      */
     public function toArray(): array
     {
@@ -57,18 +62,19 @@ class Builder implements Arrayable
     }
 
     /**
-     * @return ThrowableArray
+     * @template TThrowable of Throwable
+     *
+     * @param  class-string<TThrowable>  $throwable
+     * @return TThrowable
      */
-    public function build(?Closure $tap = null, ?string $message = null, null|bool|float|int|string ...$arguments): array
+    public function build(string $throwable): Throwable
     {
-        if ($tap instanceof Closure) {
-            $tap($this);
-        }
+        $buildUsing = tap(static::$buildUsing, static function (): void {
+            static::$buildUsing = null;
+        });
 
-        if ($message) {
-            $this->setMessage($message, ...$arguments);
-        }
+        value($buildUsing, $this);
 
-        return $this->toArray();
+        return new $throwable(...$this->toArray());
     }
 }

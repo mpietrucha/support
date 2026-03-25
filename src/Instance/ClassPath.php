@@ -5,7 +5,7 @@ namespace Mpietrucha\Support\Instance;
 use Mpietrucha\Support\Filesystem\Path as FilesystemPath;
 use Mpietrucha\Support\Str;
 
-abstract class Path
+abstract class ClassPath
 {
     public static function delimiter(): string
     {
@@ -22,12 +22,12 @@ abstract class Path
         return static::join(static::delimiter(), $namespace);
     }
 
-    public static function name(string $namespace): string
+    public static function namespace(string $namespace): string
     {
         return FilesystemPath::normalize($namespace) |> FilesystemPath::name(...);
     }
 
-    public static function namespace(string $namespace, ?int $level = null): string
+    public static function get(string $namespace, ?int $level = null): string
     {
         return FilesystemPath::directory($namespace, $level) |> static::normalize(...);
     }
