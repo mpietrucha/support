@@ -16,6 +16,9 @@ use Mpietrucha\Support\Reflection\ReflectionClosure;
 use Mpietrucha\Support\Reflection\ReflectionThrowable;
 use Throwable;
 
+/**
+ * @phpstan-type TraitCollection Collection<class-string, class-string>
+ */
 abstract class Instance
 {
     /**
@@ -208,10 +211,11 @@ abstract class Instance
     }
 
     /**
-     * @return Collection<string, string>
+     * @return TraitCollection
      */
     public static function traits(object|string $class): Collection
     {
+        /** @var TraitCollection */
         return @class_uses_recursive($class) |> collect(...);
     }
 }
