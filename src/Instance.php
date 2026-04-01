@@ -110,14 +110,18 @@ abstract class Instance
             return $unbound;
         }
 
+        $closure = ReflectionClosure::make($closure);
+
+        if ($closure->isStatic()) {
+            $context = null;
+        }
+
         $bound = $unbound->bindTo($context, $scope);
 
         return static function (mixed ...$arguments) use ($bound, $closure, $source) {
             try {
                 return $bound(...$arguments);
             } catch (Throwable $throwable) {
-                $closure = ReflectionClosure::make($closure);
-
                 $source = match (true) {
                     $source === null => $closure->getClosureScopeClass(),
                     default => Reflection::make($source)
