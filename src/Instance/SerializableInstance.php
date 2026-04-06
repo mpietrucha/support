@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Mpietrucha\Support\Instance;
 
 use Laravel\SerializableClosure\SerializableClosure;

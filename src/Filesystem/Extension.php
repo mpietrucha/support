@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Mpietrucha\Support\Filesystem;
 
 use Symfony\Component\Filesystem\Path;

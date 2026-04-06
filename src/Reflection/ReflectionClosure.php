@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Mpietrucha\Support\Reflection;
 
 use Mpietrucha\Support\Concerns\Makeable;

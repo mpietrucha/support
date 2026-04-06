@@ -13,13 +13,11 @@ abstract class Touch
 
         Path::directory(...) |> $stringableFile->pipe(...) |> static::directory(...);
 
-        /** @phpstan-ignore argument.type */
         return Filesystem::touch(...) |> $stringableFile->tap(...) |> static::normalize(...);
     }
 
     public static function directory(string $path, ?string $directory = null): string
     {
-        /** @phpstan-ignore argument.type */
         return Filesystem::ensureDirectoryExists(...) |> static::build($path, $directory)->tap(...) |> static::normalize(...);
     }
 
