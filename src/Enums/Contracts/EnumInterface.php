@@ -9,6 +9,8 @@ use UnitEnum;
 
 interface EnumInterface extends UnitEnum
 {
+    public static function build(mixed $value): static;
+
     /**
      * @return Collection<int, static>
      */
