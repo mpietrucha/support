@@ -4,9 +4,10 @@ namespace Mpietrucha\Support;
 
 use Illuminate\Support\LazyCollection;
 use Mpietrucha\Support\Concerns\Makeable;
+use Symfony\Component\Finder\Finder as SymfonyFinder;
 use Symfony\Component\Finder\SplFileInfo;
 
-class Finder extends \Symfony\Component\Finder\Finder
+class Finder extends SymfonyFinder
 {
     use Makeable;
 
