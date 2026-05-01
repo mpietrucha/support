@@ -3,6 +3,7 @@
 namespace Mpietrucha\Support;
 
 use Illuminate\Support\Arr;
+use Mpietrucha\Support\Filesystem\Path;
 
 abstract class ClassNamespace
 {
@@ -49,5 +50,10 @@ abstract class ClassNamespace
         }
 
         return static::parent($namespace, --$level);
+    }
+
+    public static function toPath(string $namespace): string
+    {
+        return Str::replace(static::delimiter(), Path::delimiter(), $namespace);
     }
 }
