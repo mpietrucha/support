@@ -13,7 +13,7 @@ abstract class ClassNamespace
 
     public static function join(string ...$elements): string
     {
-        return FilesystemPath::join(...$elements) |> static::normalize(...);
+        return FilesystemPath::join(...$elements) |> static::transform(...);
     }
 
     public static function canonicalize(string $namespace): string
@@ -23,15 +23,20 @@ abstract class ClassNamespace
 
     public static function name(string $namespace): string
     {
-        return FilesystemPath::normalize($namespace) |> FilesystemPath::name(...);
+        return static::normalize($namespace) |> FilesystemPath::name(...);
     }
 
     public static function parent(string $namespace, ?int $level = null): string
     {
-        return FilesystemPath::directory($namespace, $level) |> static::normalize(...);
+        return FilesystemPath::directory(static::normalize($namespace), $level) |> static::transform(...);
     }
 
     protected static function normalize(string $namespace): string
+    {
+        return Str::replace(static::delimiter(), FilesystemPath::delimiter(), $namespace);
+    }
+
+    protected static function transform(string $namespace): string
     {
         return Str::replace(FilesystemPath::delimiter(), static::delimiter(), $namespace);
     }
