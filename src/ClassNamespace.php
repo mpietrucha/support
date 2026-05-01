@@ -2,7 +2,7 @@
 
 namespace Mpietrucha\Support;
 
-use Mpietrucha\Support\Filesystem\Path as FilesystemPath;
+use Illuminate\Support\Arr;
 
 abstract class ClassNamespace
 {
@@ -13,31 +13,41 @@ abstract class ClassNamespace
 
     public static function join(string ...$elements): string
     {
-        return FilesystemPath::join(...$elements) |> static::transform(...);
+        $delimiter = static::delimiter();
+
+        $elements = Arr::map($elements, static function (string $element) use ($delimiter): string {
+            return Str::trim($element, $delimiter);
+        });
+
+        return Arr::join($elements, $delimiter);
     }
 
     public static function canonicalize(string $namespace): string
     {
-        return static::join(static::delimiter(), $namespace);
+        return Str::start($namespace, static::delimiter());
     }
 
     public static function name(string $namespace): string
     {
-        return static::normalize($namespace) |> FilesystemPath::name(...);
+        return class_basename($namespace);
     }
 
     public static function parent(string $namespace, ?int $level = null): string
     {
-        return FilesystemPath::directory(static::normalize($namespace), $level) |> static::transform(...);
-    }
+        if ($level === 0) {
+            return $namespace;
+        }
 
-    protected static function normalize(string $namespace): string
-    {
-        return Str::replace(static::delimiter(), FilesystemPath::delimiter(), $namespace);
-    }
+        $namespace = Str::beforeLast($namespace, static::delimiter());
 
-    protected static function transform(string $namespace): string
-    {
-        return Str::replace(FilesystemPath::delimiter(), static::delimiter(), $namespace);
+        if ($level === null) {
+            return $namespace;
+        }
+
+        if ($level <= 1) {
+            return $namespace;
+        }
+
+        return static::parent($namespace, --$level);
     }
 }
