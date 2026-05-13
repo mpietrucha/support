@@ -26,7 +26,7 @@ class FrameBuilder implements Arrayable
             ->keyBy
             ->value
             ->map
-            ->none()
+            ->unknown()
             ->all();
 
         /** @var BacktraceFrame $frame */
@@ -76,7 +76,8 @@ class FrameBuilder implements Arrayable
      */
     public function toArray(): array
     {
-        return $this->frame;
+        /** @var BacktraceFrame */
+        return $this->frame |> Arr::whereNotNull(...);
     }
 
     public function build(): Frame
@@ -86,12 +87,14 @@ class FrameBuilder implements Arrayable
 
     protected function set(FrameProperty $frameProperty, mixed $value): static
     {
+        if ($value === null) {
+            return $this;
+        }
+
         $frame = $this->toArray();
 
-        /** @var BacktraceFrame $frame */
-        $frame = Arr::set($frame, $frameProperty->value, $value);
-
-        $this->frame = $frame;
+        /** @phpstan-ignore assign.propertyType */
+        $this->frame = Arr::set($frame, $frameProperty->value, $value);
 
         return $this;
     }

@@ -6,7 +6,6 @@ namespace Mpietrucha\Support\Backtrace;
 
 use Mpietrucha\Support\Enums\Concerns\InteractsWithEnum;
 use Mpietrucha\Support\Enums\Contracts\EnumInterface;
-use Mpietrucha\Support\Str;
 
 enum FrameProperty: string implements EnumInterface
 {
@@ -26,10 +25,10 @@ enum FrameProperty: string implements EnumInterface
 
     case Function = 'function';
 
-    public function none(): ?string
+    public function unknown(): ?string
     {
         return match ($this) {
-            self::Function => Str::none(),
+            self::Function => 'unknown',
             default => null
         };
     }
