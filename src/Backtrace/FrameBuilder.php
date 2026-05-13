@@ -26,7 +26,7 @@ class FrameBuilder implements Arrayable
             ->keyBy
             ->value
             ->map
-            ->unknown()
+            ->defaultValue()
             ->all();
 
         /** @var BacktraceFrame $frame */

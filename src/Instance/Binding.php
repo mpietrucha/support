@@ -67,8 +67,8 @@ readonly class Binding
 
         $definition = sprintf(
             '%s:%s',
-            $this->getFile() ?: 'unknown',
-            $this->getLine() ?: 'unknown',
+            $this->getFile() ?: 'unknown-file',
+            $this->getLine() ?: 'unknown-line',
         );
 
         return Str::replace($closure, $definition, $value);

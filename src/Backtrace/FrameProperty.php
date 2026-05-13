@@ -25,10 +25,10 @@ enum FrameProperty: string implements EnumInterface
 
     case Function = 'function';
 
-    public function unknown(): ?string
+    public function defaultValue(): ?string
     {
         return match ($this) {
-            self::Function => 'unknown',
+            self::Function => 'unknown-function',
             default => null
         };
     }
