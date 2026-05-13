@@ -88,6 +88,13 @@ abstract class BindExceptionHandler
 
     public static function handle(Throwable $throwable): void
     {
+        static::transform($throwable);
+
+        throw $throwable;
+    }
+
+    public static function transform(Throwable $throwable): void
+    {
         $reflectionThrowable = ReflectionThrowable::make($throwable);
 
         $reflectionThrowable->getMessageProperty()->setValue(
@@ -115,8 +122,6 @@ abstract class BindExceptionHandler
                 return Frame::build($frame)->setLine($line)->setFile($file)->setFunction($function);
             })->toArray()
         );
-
-        throw $throwable;
     }
 
     protected static function getMessage(Throwable $throwable): string
