@@ -6,15 +6,11 @@ use Closure;
 use Composer\Autoload\ClassLoader;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
-use Laravel\SerializableClosure\Support\ClosureStream;
-use Mpietrucha\Support\Backtrace\Frame;
-use Mpietrucha\Support\Backtrace\FrameBuilder;
 use Mpietrucha\Support\Exception\RuntimeException;
 use Mpietrucha\Support\Filesystem\Path;
+use Mpietrucha\Support\Instance\BindExceptionHandler;
 use Mpietrucha\Support\Instance\SerializableInstance;
 use Mpietrucha\Support\Reflection\ReflectionClosure;
-use Mpietrucha\Support\Reflection\ReflectionThrowable;
-use Throwable;
 
 /**
  * @phpstan-type TraitCollection Collection<class-string, class-string>
@@ -112,106 +108,13 @@ abstract class Instance
 
         $closure = ReflectionClosure::make($closure);
 
+        BindExceptionHandler::use($closure, $source);
+
         if ($closure->isStatic()) {
             $context = null;
         }
 
-        $bound = $unbound->bindTo($context, $scope);
-
-        return static function (mixed ...$arguments) use ($bound, $closure, $source) {
-            try {
-                return $bound(...$arguments);
-            } catch (Throwable $throwable) {
-                $source = match (true) {
-                    $source === null => $closure->getClosureScopeClass(),
-                    default => Reflection::make($source)
-                };
-
-                $file = $source?->getFileName() ?? $closure->getFileName();
-
-                $line = $source?->getMethod(
-                    $closure->getName()
-                )->getStartLine() ?? $closure->getStartLine();
-
-                $reflection = ReflectionThrowable::make($throwable);
-
-                $indicator = ClosureStream::STREAM_PROTO;
-
-                $reflection->getMessageProperty()->setValue(
-                    $throwable,
-                    ($closure = static function (string $value) use ($indicator, $file, $line) {
-                        if (Str::doesntContain($value, $indicator)) {
-                            return $value;
-                        }
-
-                        if ($file === false) {
-                            return $value;
-                        }
-
-                        $closure = Str::between($value, 'closure:', '}');
-
-                        if ($closure === $value) {
-                            return $value;
-                        }
-
-                        return Str::replace($closure, sprintf('%s::%s', $file, $line), $value);
-                    })($throwable->getMessage())
-                );
-
-                $reflection->getLineProperty()->setValue(
-                    $throwable,
-                    ($line = static function (Frame|Throwable $input) use ($indicator, $source, $line): ?int {
-                        $value = $input->getLine();
-
-                        if ($value === null) { /** @phpstan-ignore identical.alwaysFalse */
-                            return null;
-                        }
-
-                        if (Str::doesntContain((string) $input->getFile(), $indicator)) {
-                            return $value;
-                        }
-
-                        if ($source === null) {
-                            return $value;
-                        }
-
-                        return $value + $line - 2;
-                    })($throwable)
-                );
-
-                $reflection->getFileProperty()->setValue(
-                    $throwable,
-                    ($file = static function (Frame|Throwable $input) use ($file, $indicator) {
-                        $value = $input->getFile();
-
-                        if ($value === null) { /** @phpstan-ignore identical.alwaysFalse */
-                            return null;
-                        }
-
-                        if ($file === false) {
-                            return $value;
-                        }
-
-                        return Str::contains($value, $indicator) ? $file : $value;
-                    })($throwable)
-                );
-
-                $reflection->getTraceProperty()->setValue(
-                    $throwable,
-                    Backtrace::throwable($throwable)->map(static function (Frame $frame) use ($line, $file, $closure): FrameBuilder {
-                        $line = $line($frame);
-
-                        $file = $file($frame);
-
-                        $function = $frame->getFunction() |> $closure(...);
-
-                        return Frame::build($frame)->setLine($line)->setFile($file)->setFunction($function);
-                    })->toArray()
-                );
-
-                throw $throwable;
-            }
-        };
+        return $unbound->bindTo($context, $scope);
     }
 
     /**
