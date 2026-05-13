@@ -74,7 +74,7 @@ readonly class Binding
         return Str::replace($closure, $definition, $value);
     }
 
-    public function transformLine(int $line): ?int
+    public function transformLine(int $line): int
     {
         if ($this->source === null) {
             return $line;
@@ -83,7 +83,7 @@ readonly class Binding
         return $line + $this->getLine() - 2;
     }
 
-    public function transformFile(string $file): ?string
+    public function transformFile(string $file): string
     {
         return $this->getFile() ?: $file;
     }
