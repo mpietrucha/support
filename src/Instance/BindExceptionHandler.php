@@ -95,24 +95,28 @@ abstract class BindExceptionHandler
 
     public static function transform(Throwable $throwable): void
     {
-        $reflectionThrowable = ReflectionThrowable::make($throwable);
+        if (static::$disabled) {
+            return;
+        }
 
-        $reflectionThrowable->getMessageProperty()->setValue(
+        $reflection = ReflectionThrowable::make($throwable);
+
+        $reflection->getMessageProperty()->setValue(
             $throwable,
             static::getMessage($throwable)
         );
 
-        $reflectionThrowable->getLineProperty()->setValue(
+        $reflection->getLineProperty()->setValue(
             $throwable,
             static::getLine($throwable)
         );
 
-        $reflectionThrowable->getFileProperty()->setValue(
+        $reflection->getFileProperty()->setValue(
             $throwable,
             static::getFile($throwable)
         );
 
-        $reflectionThrowable->getTraceProperty()->setValue(
+        $reflection->getTraceProperty()->setValue(
             $throwable,
             Backtrace::throwable($throwable)->map(static function (Frame $frame): FrameBuilder {
                 $line = static::getLine($frame);

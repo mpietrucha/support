@@ -92,9 +92,6 @@ abstract class Instance
      */
     public static function bind(Closure $closure, ?object $context = null, null|object|string $scope = null, null|object|string $source = null): Closure
     {
-        /** @var Closure $unbound */
-        $unbound = static::serialize($closure) |> static::unserialize(...);
-
         /** @var object|null|class-string $scope */
         $scope = match (true) {
             $context === null => $scope,
@@ -102,13 +99,18 @@ abstract class Instance
             default => $scope
         };
 
+        if ($scope === null && $context === null && $source === null) {
+            return $closure;
+        }
+
+        /** @var Closure $unbound */
+        $unbound = static::serialize($closure) |> static::unserialize(...);
+
+        BindExceptionHandler::use($closure = ReflectionClosure::make($closure), $source);
+
         if ($scope === null && $context === null) {
             return $unbound;
         }
-
-        $closure = ReflectionClosure::make($closure);
-
-        BindExceptionHandler::use($closure, $source);
 
         if ($closure->isStatic()) {
             $context = null;
