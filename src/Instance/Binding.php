@@ -2,6 +2,7 @@
 
 namespace Mpietrucha\Support\Instance;
 
+use Laravel\SerializableClosure\Support\ClosureStream;
 use Mpietrucha\Support\Concerns\Compatible;
 use Mpietrucha\Support\Concerns\Makeable;
 use Mpietrucha\Support\Reflection;
@@ -63,7 +64,7 @@ readonly class Binding
 
     public function transformClosure(string $value): string
     {
-        $closure = Str::between($value, 'closure:', '}');
+        $closure = Str::between($value, $closurePrototype = 'closure:', '}');
 
         $definition = sprintf(
             '%s:%s',
@@ -71,7 +72,9 @@ readonly class Binding
             $this->getLine() ?: 'unknown-line',
         );
 
-        return Str::replace($closure, $definition, $value);
+        $boundPrototype = sprintf('%s:', ClosureStream::STREAM_PROTO);
+
+        return Str::replace([$closure, $boundPrototype], [$definition, $closurePrototype], $value);
     }
 
     public function transformLine(int $line): int
