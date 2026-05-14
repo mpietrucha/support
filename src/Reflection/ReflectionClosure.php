@@ -10,4 +10,9 @@ use Mpietrucha\Support\Concerns\Makeable;
 class ReflectionClosure extends LaravelReflectionClosure
 {
     use Makeable;
+
+    public function isUnbound(): bool
+    {
+        return $this->getClosureThis() === null && $this->getClosureScopeClass() === null;
+    }
 }

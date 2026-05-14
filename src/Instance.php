@@ -105,7 +105,7 @@ abstract class Instance
             $context = null;
         }
 
-        if ($reflectionClosure->getClosureThis() === null) {
+        if ($reflectionClosure->isUnbound()) {
             return $closure->bindTo($context, $scope);
         }
 
