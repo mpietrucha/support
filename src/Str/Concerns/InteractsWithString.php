@@ -46,6 +46,11 @@ trait InteractsWithString
         return '-';
     }
 
+    public static function space(): string
+    {
+        return ' ';
+    }
+
     public static function nullWhenEmpty(string $value): ?string
     {
         return $value === '' ? null : $value;

@@ -2,7 +2,7 @@
 
 namespace Mpietrucha\Support\Instance;
 
-use Illuminate\Support\Collection;
+use Illuminate\Support\Arr;
 use Mpietrucha\Support\Backtrace;
 use Mpietrucha\Support\Backtrace\Frame;
 use Mpietrucha\Support\Backtrace\FrameBuilder;
@@ -13,12 +13,12 @@ use Throwable;
 /**
  * @phpstan-import-type BindingSource from Binding
  *
- * @phpstan-type BindingArguments array{ReflectionClosure, BindingSource}
+ * @phpstan-type PendingBinding array{ReflectionClosure, BindingSource}
  */
 abstract class BindExceptionHandler
 {
     /**
-     * @var array<int, BindingArguments>
+     * @var array<int, PendingBinding>
      */
     protected static array $bindings = [];
 
@@ -83,13 +83,7 @@ abstract class BindExceptionHandler
 
         static::initializeIfNotInitialized();
 
-        $exists = in_array($binding = [$closure, $source], static::$bindings);
-
-        if ($exists) {
-            return;
-        }
-
-        static::$bindings[] = $binding;
+        static::$bindings[] = [$closure, $source];
     }
 
     public static function handle(Throwable $throwable): void
@@ -105,61 +99,58 @@ abstract class BindExceptionHandler
             return;
         }
 
-        $reflectionThrowable = ReflectionThrowable::make($throwable);
+        $reflection = ReflectionThrowable::make($throwable);
 
-        $reflectionThrowable->getMessageProperty()->setValue(
+        $reflection->getMessageProperty()->setValue(
             $throwable,
-            static::transformMessage($throwable)
+            static::getMessage($throwable)
         );
 
-        $reflectionThrowable->getLineProperty()->setValue(
+        $reflection->getLineProperty()->setValue(
             $throwable,
-            static::transformLine($throwable)
+            static::getLine($throwable)
         );
 
-        $reflectionThrowable->getFileProperty()->setValue(
+        $reflection->getFileProperty()->setValue(
             $throwable,
-            static::transformFile($throwable)
+            static::getFile($throwable)
         );
 
-        $reflectionThrowable->getTraceProperty()->setValue(
+        $reflection->getTraceProperty()->setValue(
             $throwable,
             Backtrace::throwable($throwable)->map(static function (Frame $frame): FrameBuilder {
-                $line = static::transformLine($frame);
-                $file = static::transformFile($frame);
-                $function = static::transformFunction($frame);
+                $line = static::getLine($frame);
+                $file = static::getFile($frame);
+                $function = static::getFunction($frame);
 
                 return Frame::build($frame)->setLine($line)->setFile($file)->setFunction($function);
             })->toArray()
         );
     }
 
-    public static function transformMessage(Throwable $throwable): string
+    protected static function getMessage(Throwable $throwable): string
     {
-        $bindings = static::getBindings($message = $throwable->getMessage());
+        $binding = static::binding($message = $throwable->getMessage());
 
-        if ($bindings->isEmpty()) {
+        if (! $binding instanceof Binding) {
             return $message;
         }
 
-        return $bindings->reduce(
-            static fn (string $message, Binding $binding): string => $binding->transformMessage($message),
-            $message
-        );
+        return $binding->transformValue($message);
     }
 
-    public static function transformFunction(Frame $frame): string
+    protected static function getFunction(Frame $frame): string
     {
-        $bindings = static::getBindings($function = $frame->getFunction());
+        $binding = static::binding($function = $frame->getFunction());
 
-        if ($bindings->isEmpty()) {
+        if (! $binding instanceof Binding) {
             return $function;
         }
 
-        return $bindings->first()->transformFunction($function);
+        return $binding->transformValue($function);
     }
 
-    public static function transformLine(Frame|Throwable $frameOrInput): ?int
+    protected static function getLine(Frame|Throwable $frameOrInput): ?int
     {
         $line = $frameOrInput->getLine();
 
@@ -167,36 +158,38 @@ abstract class BindExceptionHandler
             return null;
         }
 
-        $bindings = $frameOrInput->getFile() |> static::getBindings(...);
+        $binding = $frameOrInput->getFile() |> static::binding(...);
 
-        if ($bindings->isEmpty()) {
+        if (! $binding instanceof Binding) {
             return $line;
         }
 
-        return $bindings->first()->transformLine($line);
+        return $binding->transformLine($line);
     }
 
-    public static function transformFile(Frame|Throwable $frameOrInput): ?string
+    protected static function getFile(Frame|Throwable $frameOrInput): ?string
     {
-        $bindings = static::getBindings($file = $frameOrInput->getFile());
+        $binding = static::binding($file = $frameOrInput->getFile());
 
-        if ($bindings->isEmpty()) {
+        if (! $binding instanceof Binding) {
             return $file;
         }
 
         /** @var string $file */
-        return $bindings->first()->transformFile($file);
+        return $binding->transformFile($file);
     }
 
-    /**
-     * @return Collection<int, Binding>
-     */
-    protected static function getBindings(mixed $value): Collection
+    protected static function binding(mixed $value): ?Binding
     {
-        $bindings = static::$bindings |> collect(...);
+        $bindings = Arr::first(
+            static::$bindings,
+            static fn (array $bindings): bool => Binding::compatible($value, $bindings[0])
+        );
 
-        $bindings->transform(static fn (array $arguments): ?Binding => Binding::for($value, ...$arguments));
+        if ($bindings === null) {
+            return null;
+        }
 
-        return $bindings->filter();
+        return Binding::make(...$bindings);
     }
 }

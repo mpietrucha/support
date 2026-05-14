@@ -7,7 +7,6 @@ use Rector\CodingStyle\Rector\Closure\StaticClosureRector;
 use Rector\Config\RectorConfig;
 use Rector\DeadCode\Rector\Expression\RemoveDeadStmtRector;
 use Rector\DeadCode\Rector\Node\RemoveNonExistingVarAnnotationRector;
-use Rector\Naming\Rector\Assign\RenameVariableToMatchMethodCallReturnTypeRector;
 use Rector\Php74\Rector\Closure\ClosureToArrowFunctionRector;
 use RectorLaravel\Set\LaravelSetList;
 
@@ -20,9 +19,6 @@ return RectorConfig::configure()
         RemoveDeadStmtRector::class,
         ClosureToArrowFunctionRector::class,
         RemoveNonExistingVarAnnotationRector::class,
-        RenameVariableToMatchMethodCallReturnTypeRector::class => [
-            'src/Instance/BindExceptionHandler.php',
-        ],
     ])
     ->withRules([
         StaticClosureRector::class,

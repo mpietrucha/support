@@ -99,21 +99,23 @@ abstract class Instance
             default => $scope
         };
 
-        if ($scope === null && $context === null && $source === null) {
-            return $closure;
+        $reflectionClosure = ReflectionClosure::make($closure);
+
+        if ($reflectionClosure->isStatic()) {
+            $context = null;
         }
+
+        if ($reflectionClosure->getClosureThis() === null) {
+            return $closure->bindTo($context, $scope);
+        }
+
+        BindExceptionHandler::use($reflectionClosure, $source);
 
         /** @var Closure $unbound */
         $unbound = static::serialize($closure) |> static::unserialize(...);
 
-        BindExceptionHandler::use($closure = ReflectionClosure::make($closure), $source);
-
         if ($scope === null && $context === null) {
             return $unbound;
-        }
-
-        if ($closure->isStatic()) {
-            $context = null;
         }
 
         return $unbound->bindTo($context, $scope);

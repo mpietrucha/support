@@ -2,7 +2,6 @@
 
 namespace Mpietrucha\Support\Instance;
 
-use Laravel\SerializableClosure\Support\ClosureStream;
 use Mpietrucha\Support\Concerns\Compatible;
 use Mpietrucha\Support\Concerns\Makeable;
 use Mpietrucha\Support\Reflection;
@@ -51,7 +50,7 @@ readonly class Binding
      */
     public static function for(mixed $value, ReflectionClosure $closure, null|object|string $source = null): ?static
     {
-        $incompatible = self::incompatible($value, $closure);
+        $incompatible = static::incompatible($value, $closure);
 
         if ($incompatible) {
             return null;
@@ -97,26 +96,17 @@ readonly class Binding
 
     public function transformMessage(string $message): string
     {
-        $isMessage = Str::is(
-            sprintf($definition = '%s on line %s', '*}', '*'),
-            $message
-        );
-
-        if (! $isMessage) {
-            return $this->transformFunction($message);
-        }
-
         $line = (int) Str::afterLast($message, Str::space());
 
         $value = sprintf(
-            $definition,
+            '%s on line %s',
             $this->getFile(),
             $this->transformLine($line),
         );
 
         $code = Str::after($message, $this->getPrototype());
 
-        return Str::replace($code, $value, $message) |> $this->transformPrototype(...);
+        return Str::replace($code, $value, $this->transformPrototype($message));
     }
 
     public function transformFunction(string $function): string
@@ -127,15 +117,17 @@ readonly class Binding
             $this->getLine(),
         );
 
-        $code = Str::between($function, $this->getPrototype(), '}');
+        $code = Str::between($message, $this->getPrototype(), '}');
 
-        return Str::replace($code, $value, $function) |> $this->transformPrototype(...);
+        return Str::replace($code, $value, $this->transformPrototype($function));
     }
 
     public function transformPrototype(string $value): string
     {
-        $prototype = sprintf('%s:', ClosureStream::STREAM_PROTO);
-
-        return Str::replace($prototype, $this->getPrototype(), $value);
+        return Str::replace(
+            sprintf('%s:', ClosureStream::STREAM_PROTO),
+            $this->getPrototype(),
+            $value
+        );
     }
 }

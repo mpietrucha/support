@@ -71,11 +71,14 @@ abstract class Filesystem
         return hash($algorithm, $process->getOutput());
     }
 
+    /**
+     * @return null|class-string
+     */
     public static function namespace(string $path): ?string
     {
         $path = Path::get($path);
 
-        /** @var null|string */
+        /** @var null|class-string */
         return Arr::map(
             ClassLoader::getRegisteredLoaders(),
             static fn (ClassLoader $classLoader): ?string => array_find_key(

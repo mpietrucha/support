@@ -2,6 +2,7 @@
 
 namespace Mpietrucha\Support\Instance;
 
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Mpietrucha\Support\Backtrace;
 use Mpietrucha\Support\Backtrace\Frame;
@@ -13,12 +14,13 @@ use Throwable;
 /**
  * @phpstan-import-type BindingSource from Binding
  *
- * @phpstan-type BindingArguments array{ReflectionClosure, BindingSource}
+ * @phpstan-type BindingCollection Collection<int, Binding>
+ * @phpstan-type PendingBinding array{ReflectionClosure, BindingSource}
  */
 abstract class BindExceptionHandler
 {
     /**
-     * @var array<int, BindingArguments>
+     * @var array<int, PendingBinding>
      */
     protected static array $bindings = [];
 
@@ -83,13 +85,7 @@ abstract class BindExceptionHandler
 
         static::initializeIfNotInitialized();
 
-        $exists = in_array($binding = [$closure, $source], static::$bindings);
-
-        if ($exists) {
-            return;
-        }
-
-        static::$bindings[] = $binding;
+        static::$bindings[] = [$closure, $source];
     }
 
     public static function handle(Throwable $throwable): void
@@ -105,24 +101,24 @@ abstract class BindExceptionHandler
             return;
         }
 
-        $reflectionThrowable = ReflectionThrowable::make($throwable);
+        $reflection = ReflectionThrowable::make($throwable);
 
-        $reflectionThrowable->getMessageProperty()->setValue(
+        $reflection->getMessageProperty()->setValue(
             $throwable,
             static::transformMessage($throwable)
         );
 
-        $reflectionThrowable->getLineProperty()->setValue(
+        $reflection->getLineProperty()->setValue(
             $throwable,
             static::transformLine($throwable)
         );
 
-        $reflectionThrowable->getFileProperty()->setValue(
+        $reflection->getFileProperty()->setValue(
             $throwable,
             static::transformFile($throwable)
         );
 
-        $reflectionThrowable->getTraceProperty()->setValue(
+        $reflection->getTraceProperty()->setValue(
             $throwable,
             Backtrace::throwable($throwable)->map(static function (Frame $frame): FrameBuilder {
                 $line = static::transformLine($frame);
@@ -134,32 +130,29 @@ abstract class BindExceptionHandler
         );
     }
 
-    public static function transformMessage(Throwable $throwable): string
+    protected static function transformMessage(Throwable $throwable): string
     {
-        $bindings = static::getBindings($message = $throwable->getMessage());
+        $bindings = static::bindings($message = $throwable->getMessage());
 
         if ($bindings->isEmpty()) {
             return $message;
         }
 
-        return $bindings->reduce(
-            static fn (string $message, Binding $binding): string => $binding->transformMessage($message),
-            $message
-        );
+        return static::reduce($bindings, $message);
     }
 
-    public static function transformFunction(Frame $frame): string
+    protected static function transformFunction(Frame $frame): string
     {
-        $bindings = static::getBindings($function = $frame->getFunction());
+        $bindings = static::bindings($function = $frame->getFunction());
 
         if ($bindings->isEmpty()) {
             return $function;
         }
 
-        return $bindings->first()->transformFunction($function);
+        return static::reduce($bindings, $function);
     }
 
-    public static function transformLine(Frame|Throwable $frameOrInput): ?int
+    protected static function transformLine(Frame|Throwable $frameOrInput): ?int
     {
         $line = $frameOrInput->getLine();
 
@@ -167,7 +160,7 @@ abstract class BindExceptionHandler
             return null;
         }
 
-        $bindings = $frameOrInput->getFile() |> static::getBindings(...);
+        $bindings = $frameOrInput->getFile() |> static::bindings(...);
 
         if ($bindings->isEmpty()) {
             return $line;
@@ -176,9 +169,9 @@ abstract class BindExceptionHandler
         return $bindings->first()->transformLine($line);
     }
 
-    public static function transformFile(Frame|Throwable $frameOrInput): ?string
+    protected static function transformFile(Frame|Throwable $frameOrInput): ?string
     {
-        $bindings = static::getBindings($file = $frameOrInput->getFile());
+        $bindings = static::bindings($file = $frameOrInput->getFile());
 
         if ($bindings->isEmpty()) {
             return $file;
@@ -189,14 +182,25 @@ abstract class BindExceptionHandler
     }
 
     /**
-     * @return Collection<int, Binding>
+     * @param  BindingCollection  $bindings
      */
-    protected static function getBindings(mixed $value): Collection
+    protected static function reduce(Collection $bindings, string $value): string
     {
-        $bindings = static::$bindings |> collect(...);
+        return $bindings->reduce(static function (string $value, Binding $binding): string {
+            return $binding->transform($value);
+        }, $value);
+    }
 
-        $bindings->transform(static fn (array $arguments): ?Binding => Binding::for($value, ...$arguments));
+    /**
+     * @return BindingCollection
+     */
+    protected static function bindings(mixed $value): Collection
+    {
+        $bindings = Arr::where(
+            static::$bindings,
+            static fn (array $bindings): bool => Binding::compatible($value, $bindings[0])
+        );
 
-        return $bindings->filter();
+        return Binding::make(...) |> collect($bindings)->mapSpread(...);
     }
 }
