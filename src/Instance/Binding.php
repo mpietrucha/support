@@ -106,7 +106,10 @@ readonly class Binding
             return $this->transformFunction($message);
         }
 
-        $line = (int) Str::afterLast($message, Str::space());
+        $line = (int) Str::match(
+            sprintf($definition, '/', '(\d+)/'),
+            $message
+        );
 
         $value = sprintf(
             $definition,
