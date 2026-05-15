@@ -96,7 +96,7 @@ abstract class Instance
         $scope = match (true) {
             $context === null => $scope,
             $scope === null => static::namespace($context),
-            default => $scope
+            default => $scope,
         };
 
         $reflectionClosure = ReflectionClosure::make($closure);
