@@ -10,7 +10,7 @@ trait InteractsWithNumber
     {
         return Arr::every(
             $arguments,
-            static fn (mixed $argument): bool => is_numeric($argument) && $argument >= 0
+            static fn (mixed $argument): bool => is_numeric($argument) && $argument > 0
         );
     }
 }
