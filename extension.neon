@@ -1,0 +1,7 @@
+services:
+    -
+        class: Mpietrucha\PHPStan\Types\NumericGreaterThanZeroExtension
+        arguments:
+            class: Mpietrucha\Support\Number
+        tags:
+            - phpstan.typeSpecifier.staticMethodTypeSpecifyingExtension

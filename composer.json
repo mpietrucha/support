@@ -37,6 +37,7 @@
     "prefer-stable": true,
     "autoload": {
         "psr-4": {
+            "Mpietrucha\\PHPStan\\": "phpstan/src/",
             "Mpietrucha\\Support\\": "src/"
         }
     },
@@ -47,6 +48,13 @@
         },
         "optimize-autoloader": true,
         "sort-packages": true
+    },
+    "extra": {
+        "phpstan": {
+            "includes": [
+                "extension.neon"
+            ]
+        }
     },
     "scripts": {
         "post-update-cmd": [

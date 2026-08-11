@@ -2,8 +2,6 @@
 
 declare(strict_types=1);
 
-use Rector\CodingStyle\Rector\ArrowFunction\StaticArrowFunctionRector;
-use Rector\CodingStyle\Rector\Closure\StaticClosureRector;
 use Rector\Config\RectorConfig;
 use Rector\DeadCode\Rector\Expression\RemoveDeadStmtRector;
 use Rector\DeadCode\Rector\Node\RemoveNonExistingVarAnnotationRector;
@@ -19,10 +17,6 @@ return RectorConfig::configure()
         RemoveDeadStmtRector::class,
         ClosureToArrowFunctionRector::class,
         RemoveNonExistingVarAnnotationRector::class,
-    ])
-    ->withRules([
-        StaticClosureRector::class,
-        StaticArrowFunctionRector::class,
     ])
     ->withSets([
         LaravelSetList::LARAVEL_130,
