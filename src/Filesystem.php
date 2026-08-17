@@ -87,4 +87,14 @@ abstract class Filesystem
             )
         ) |> Arr::whereNotNull(...) |> Arr::first(...);
     }
+
+    /**
+     * @param  array<string, string>  $replacements
+     */
+    public static function stub(string $path, array $replacements): string
+    {
+        $value = static::get($path);
+
+        return Str::stub($value, $replacements);
+    }
 }
