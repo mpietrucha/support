@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Mpietrucha\Support\Str\Concerns;
 
-use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
 trait InteractsWithString
@@ -60,23 +59,17 @@ trait InteractsWithString
     }
 
     /**
-     * @param  array<string, string>  $replacements
+     * @param  array<string, string>  $values
      */
-    public static function stub(string $value, array $replacements, ?string $prefix = '{{ ', ?string $suffix = ' }}'): string
+    public static function stub(string $stub, array $values, string $prefix = '{{', string $suffix = '}}'): string
     {
-        /** @var array<string, string> $replacements */
-        $replacements = Arr::mapWithKeys($replacements, static function (string $value, string $key) use ($prefix, $suffix): array {
-            if (is_string($prefix)) {
-                $key = Str::start($key, $prefix);
-            }
+        return collect($values)->reduce(static function (string $stub, string $value, string $name) use ($prefix, $suffix): string {
+            $replacements = [
+                sprintf('%s%s%s', $prefix, $name, $suffix),
+                sprintf('%s %s %s', $prefix, $name, $suffix),
+            ];
 
-            if (is_string($suffix)) {
-                $key = Str::finish($key, $suffix);
-            }
-
-            return [$key => $value];
-        });
-
-        return static::swap($replacements, $value);
+            return Str::replace($replacements, $value, $stub);
+        }, $stub);
     }
 }
