@@ -12,7 +12,11 @@ abstract class Temporary
 
     public static function bucket(): string
     {
-        return Path::build('mpietrucha-support-temporary-storage-bucket', static::utilize());
+        $bucket = static::utilize();
+
+        $directory = sprintf('%s-%s', 'mpietrucha', md5($bucket));
+
+        return Path::build($directory, $bucket);
     }
 
     public static function flush(): void
