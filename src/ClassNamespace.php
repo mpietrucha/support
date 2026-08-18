@@ -55,16 +55,11 @@ abstract class ClassNamespace
 
     public static function toPath(string $namespace): string
     {
-        return static::normalizeForPath($namespace) |> Path::directory(...);
+        return Str::replace(static::delimiter(), Path::delimiter(), $namespace);
     }
 
     public static function toFile(string $namespace): string
     {
-        return Extension::set(static::normalizeForPath($namespace), 'php');
-    }
-
-    protected static function normalizeForPath(string $namespace): string
-    {
-        return Str::replace(static::delimiter(), Path::delimiter(), $namespace);
+        return Extension::set(static::toPath($namespace), 'php');
     }
 }
