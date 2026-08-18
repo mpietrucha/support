@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace Mpietrucha\Support\Str\Concerns;
 
-use Illuminate\Support\Str;
+use Mpietrucha\Support\Stubs\StubRenderer;
 
+/**
+ * @phpstan-import-type StubReplacements from StubRenderer
+ */
 trait InteractsWithString
 {
     public static function eol(): string
@@ -59,17 +62,10 @@ trait InteractsWithString
     }
 
     /**
-     * @param  array<string, string>  $replacements
+     * @param  StubReplacements  $replacements
      */
-    public static function stub(string $value, array $replacements, string $prefix = '{{', string $suffix = '}}'): string
+    public static function stub(string $value, array $replacements, ?string $prefix = null, ?string $suffix = null): string
     {
-        return collect($replacements)->reduce(static function (string $value, string $replacement, string $name) use ($prefix, $suffix): string {
-            $replacements = [
-                sprintf('%s%s%s', $prefix, $name, $suffix),
-                sprintf('%s %s %s', $prefix, $name, $suffix),
-            ];
-
-            return Str::replace($replacements, $replacement, $value);
-        }, $value);
+        return StubRenderer::render($value, $replacements, $prefix, $suffix);
     }
 }

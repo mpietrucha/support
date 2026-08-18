@@ -8,10 +8,13 @@ use Illuminate\Support\Arr;
 use Mpietrucha\Support\Exception\RuntimeException;
 use Mpietrucha\Support\Filesystem\Path;
 use Mpietrucha\Support\Forward\Concerns\Forwardable;
+use Mpietrucha\Support\Stubs\StubRenderer;
 use Symfony\Component\Process\Process;
 
 /**
  * @mixin IlluminateFilesystem
+ *
+ * @phpstan-import-type StubReplacements from StubRenderer
  */
 abstract class Filesystem
 {
@@ -89,12 +92,10 @@ abstract class Filesystem
     }
 
     /**
-     * @param  array<string, string>  $replacements
+     * @param  StubReplacements  $replacements
      */
-    public static function stub(string $path, array $replacements): string
+    public static function stub(string $path, array $replacements, ?string $prefix = null, ?string $suffix = null): string
     {
-        $value = static::get($path);
-
-        return Str::stub($value, $replacements);
+        return StubRenderer::file($path, $replacements, $prefix, $suffix);
     }
 }
