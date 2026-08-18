@@ -3,6 +3,7 @@
 namespace Mpietrucha\Support;
 
 use Illuminate\Support\Arr;
+use Mpietrucha\Support\Filesystem\Extension;
 use Mpietrucha\Support\Filesystem\Path;
 
 abstract class ClassNamespace
@@ -53,6 +54,16 @@ abstract class ClassNamespace
     }
 
     public static function toPath(string $namespace): string
+    {
+        return static::normalizeForPath($namespace) |> Path::directory(...);
+    }
+
+    public static function toFile(string $namespace): string
+    {
+        return Extension::set(static::normalizeForPath($namespace), 'php');
+    }
+
+    protected static function normalizeForPath(string $namespace): string
     {
         return Str::replace(static::delimiter(), Path::delimiter(), $namespace);
     }
