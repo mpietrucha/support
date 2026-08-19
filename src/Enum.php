@@ -20,7 +20,7 @@ abstract class Enum
     {
         $enum = static::unit($enum, $class);
 
-        if (! is_a($enum, BackedEnum::class, true)) {
+        if (Instance::isNot($enum, BackedEnum::class)) {
             InvalidArgumentException::throw('Enum `%s` is not BackedEnum', $enum);
         }
 
@@ -47,7 +47,7 @@ abstract class Enum
             $class = EnumInterface::class;
         }
 
-        if (! is_a($enum, $class, true)) {
+        if (Instance::isNot($enum, $class)) {
             RuntimeException::throw('Enum `%s` must implement %s', $enum, $class);
         }
 

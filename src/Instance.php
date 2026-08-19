@@ -29,6 +29,36 @@ abstract class Instance
         return class_exists($class, $autoload) ? $class : null;
     }
 
+    /**
+     * @template TClass of object
+     *
+     * @param  class-string<TClass>|TClass  $instance
+     *
+     * @phpstan-assert-if-true class-string<TClass>|TClass $class
+     */
+    public static function is(object|string $class, object|string $instance): bool
+    {
+        $instance = static::namespace($instance);
+
+        if ($instance === null) {
+            return false;
+        }
+
+        return is_a($class, $instance, true);
+    }
+
+    /**
+     * @template TClass of object
+     *
+     * @param  class-string<TClass>|TClass  $instance
+     *
+     * @phpstan-assert-if-false class-string<TClass>|TClass $class
+     */
+    final public static function isNot(object|string $class, object|string $instance): bool
+    {
+        return ! static::is($class, $instance);
+    }
+
     public static function file(object|string $class): ?string
     {
         if (is_object($class)) {
