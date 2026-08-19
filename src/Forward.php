@@ -32,9 +32,7 @@ readonly class Forward
      */
     public function eval(string $method, iterable $arguments): mixed
     {
-        $target = $this->target;
-
-        $namespace = Instance::namespace($target);
+        $namespace = Instance::namespace($target = $this->target);
 
         if ($namespace === null) {
             /** @var string $target */

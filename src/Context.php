@@ -16,19 +16,11 @@ abstract class Context
 
     public static function console(): bool
     {
-        return in_array(PHP_SAPI, static::consoles());
+        return in_array(PHP_SAPI, static::$consoles);
     }
 
     final public static function web(): bool
     {
         return ! static::console();
-    }
-
-    /**
-     * @return list<string>
-     */
-    protected static function consoles(): array
-    {
-        return static::$consoles;
     }
 }
