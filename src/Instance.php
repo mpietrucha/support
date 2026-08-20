@@ -26,7 +26,7 @@ abstract class Instance
             return $class::class;
         }
 
-        return class_exists($class, $autoload) ? $class : null;
+        return class_exists($class, $autoload) || interface_exists($class, $autoload) || trait_exists($class, $autoload) ? $class : null;
     }
 
     /**
