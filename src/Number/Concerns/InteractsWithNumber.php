@@ -2,7 +2,7 @@
 
 namespace Mpietrucha\Support\Number\Concerns;
 
-use Mpietrucha\Support\Arr;
+use Illuminate\Support\Arr;
 
 trait InteractsWithNumber
 {

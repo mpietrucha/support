@@ -3,7 +3,7 @@
 namespace Mpietrucha\Support\Backtrace;
 
 use Illuminate\Contracts\Support\Arrayable;
-use Mpietrucha\Support\Arr;
+use Illuminate\Support\Arr;
 use Mpietrucha\Support\Concerns\Makeable;
 
 /**
