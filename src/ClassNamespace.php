@@ -2,7 +2,6 @@
 
 namespace Mpietrucha\Support;
 
-use Illuminate\Support\Arr;
 use Mpietrucha\Support\Filesystem\Extension;
 use Mpietrucha\Support\Filesystem\Path;
 
