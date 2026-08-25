@@ -4,7 +4,6 @@ namespace Mpietrucha\Support;
 
 use Composer\Autoload\ClassLoader;
 use Illuminate\Filesystem\Filesystem as IlluminateFilesystem;
-use Illuminate\Support\Arr;
 use Mpietrucha\Support\Exception\RuntimeException;
 use Mpietrucha\Support\Filesystem\Path;
 use Mpietrucha\Support\Forward\Concerns\Forwardable;
