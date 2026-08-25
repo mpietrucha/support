@@ -15,7 +15,7 @@ trait InteractsWithArray
     /**
      * @param  InputArray  $array
      * @param  null|array<mixed>  $default
-     * @return null|array<mixed>
+     * @return ($default is null ? null|array<mixed> : array<mixed>)
      */
     public static function tryArray(array|ArrayAccess $array, int|string $key, ?array $default = null): ?array
     {
@@ -26,6 +26,7 @@ trait InteractsWithArray
 
     /**
      * @param  InputArray  $array
+     * @return ($default is null ? null|int : int)
      */
     public static function tryInteger(array|ArrayAccess $array, int|string $key, ?int $default = null): ?int
     {
@@ -36,6 +37,7 @@ trait InteractsWithArray
 
     /**
      * @param  InputArray  $array
+     * @return ($default is null ? null|float : float)
      */
     public static function tryFloat(array|ArrayAccess $array, int|string $key, ?float $default = null): ?float
     {
@@ -46,6 +48,7 @@ trait InteractsWithArray
 
     /**
      * @param  InputArray  $array
+     * @return ($default is null ? null|bool : bool)
      */
     public static function tryBoolean(array|ArrayAccess $array, int|string $key, ?bool $default = null): ?bool
     {
@@ -56,6 +59,7 @@ trait InteractsWithArray
 
     /**
      * @param  InputArray  $array
+     * @return ($default is null ? null|string : string)
      */
     public static function tryString(array|ArrayAccess $array, int|string $key, ?string $default = null): ?string
     {
