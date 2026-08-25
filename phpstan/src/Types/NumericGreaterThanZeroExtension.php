@@ -38,16 +38,16 @@ final class NumericGreaterThanZeroExtension implements StaticMethodTypeSpecifyin
         return $this->class;
     }
 
-    public function isStaticMethodSupported(MethodReflection $reflection, StaticCall $call, TypeSpecifierContext $context): bool
+    public function isStaticMethodSupported(MethodReflection $methodReflection, StaticCall $staticCall, TypeSpecifierContext $context): bool
     {
         if (! $context->true()) {
             return false;
         }
 
-        return $reflection->getName() === 'numericGreaterThanZero';
+        return $methodReflection->getName() === 'numericGreaterThanZero';
     }
 
-    public function specifyTypes(MethodReflection $reflection, StaticCall $call, Scope $scope, TypeSpecifierContext $context): SpecifiedTypes
+    public function specifyTypes(MethodReflection $methodReflection, StaticCall $staticCall, Scope $scope, TypeSpecifierContext $context): SpecifiedTypes
     {
         $numeric = TypeCombinator::union(
             new FloatType,
@@ -57,9 +57,9 @@ final class NumericGreaterThanZeroExtension implements StaticMethodTypeSpecifyin
             ])
         );
 
-        $arguments = $call->getArgs() |> collect(...);
+        $arguments = $staticCall->getArgs() |> collect(...);
 
-        return $arguments->reduce(function (SpecifiedTypes $specifiedTypes, $arg) use ($numeric, $context, $scope, $call): SpecifiedTypes {
+        return $arguments->reduce(function (SpecifiedTypes $specifiedTypes, $arg) use ($numeric, $context, $scope, $staticCall): SpecifiedTypes {
             if ($arg->unpack) {
                 return $specifiedTypes;
             }
@@ -69,7 +69,7 @@ final class NumericGreaterThanZeroExtension implements StaticMethodTypeSpecifyin
                 $numeric,
                 $context,
                 $scope
-            )->setRootExpr($call);
+            )->setRootExpr($staticCall);
 
             return $specifiedTypes->unionWith($type);
         }, new SpecifiedTypes);
