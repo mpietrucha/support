@@ -74,13 +74,13 @@ trait InteractsWithString
     {
         $indicator = static::dot();
 
-        $relationshipName = Str::beforeLast($attribute, $indicator);
+        $relationship = Str::beforeLast($attribute, $indicator);
 
-        if ($relationshipName === $attribute) {
+        if ($relationship === $attribute) {
             return null;
         }
 
-        return static::nullWhenEmpty($relationshipName);
+        return static::nullWhenEmpty($relationship);
     }
 
     public static function relationshipAttribute(string $attribute): string
