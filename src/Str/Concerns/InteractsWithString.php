@@ -72,17 +72,21 @@ trait InteractsWithString
 
     public static function relationshipName(string $attribute): ?string
     {
-        $relationshipName = Str::beforeLast($attribute, static::dot());
+        $indicator = static::dot();
+
+        $relationshipName = Str::beforeLast($attribute, $indicator);
 
         if ($relationshipName === $attribute) {
             return null;
         }
 
-        return $relationshipName;
+        return static::nullWhenEmpty($relationshipName);
     }
 
     public static function relationshipAttribute(string $attribute): string
     {
-        return Str::afterLast($attribute, static::dot());
+        $indicator = static::dot();
+
+        return Str::afterLast($attribute, $indicator);
     }
 }
