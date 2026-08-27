@@ -6,6 +6,7 @@ namespace Mpietrucha\Support\Arr\Concerns;
 
 use ArrayAccess;
 use Mpietrucha\Support\Arr;
+use Mpietrucha\Support\Str;
 
 /**
  * @phpstan-type InputArray = array<mixed>|ArrayAccess<array-key, mixed>
@@ -66,5 +67,20 @@ trait InteractsWithArray
         $value = Arr::get($array, $key);
 
         return is_string($value) ? $value : $default;
+    }
+
+    /**
+     * @param  InputArray  $array
+     * @return ($default is null ? null|string : string)
+     */
+    public static function tryNotEmptyString(array|ArrayAccess $array, int|string $key, ?string $default = null): ?string
+    {
+        $value = static::tryString($array, $key);
+
+        if ($value === null) {
+            return $default;
+        }
+
+        return Str::nullWhenEmpty($value) ?? $default;
     }
 }
