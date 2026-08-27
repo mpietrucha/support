@@ -15,6 +15,17 @@ trait InteractsWithArray
 {
     /**
      * @param  InputArray  $array
+     * @return ($default is null ? null|scalar : scalar)
+     */
+    public static function tryScalar(array|ArrayAccess $array, int|string $key, null|bool|float|int|string $default = null): null|bool|float|int|string
+    {
+        $value = Arr::get($array, $key);
+
+        return is_scalar($value) ? $value : $default;
+    }
+
+    /**
+     * @param  InputArray  $array
      * @param  null|array<mixed>  $default
      * @return ($default is null ? null|array<mixed> : array<mixed>)
      */
