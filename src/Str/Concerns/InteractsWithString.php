@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace Mpietrucha\Support\Str\Concerns;
 
-use Illuminate\Support\Collection;
 use Mpietrucha\Support\Str;
-use Mpietrucha\Support\Stringable;
 use Mpietrucha\Support\Stubs\StubRenderer;
 
 /**
@@ -14,11 +12,6 @@ use Mpietrucha\Support\Stubs\StubRenderer;
  */
 trait InteractsWithString
 {
-    public static function of(mixed $value): Stringable
-    {
-        return Stringable::make($value);
-    }
-
     public static function eol(): string
     {
         return PHP_EOL;
@@ -95,39 +88,5 @@ trait InteractsWithString
         $indicator = static::dot();
 
         return Str::afterLast($attribute, $indicator);
-    }
-
-    public static function replacePattern(string $pattern, mixed $replacement, string $value, ?string $indicator = null): ?string
-    {
-        /** @phpstan-ignore argument.type */
-        $segments = explode($indicator ?? '*', $pattern) |> collect(...);
-
-        $regex = sprintf(
-            '/%s/m',
-            $segments->map(static function (string $segment): string {
-                $delimiter = Str::backslash();
-
-                return preg_quote($segment, $delimiter);
-            })->implode('(\S+)')
-        );
-
-        return Str::replaceMatches($regex, static function (array $matches) use ($replacement, $segments): string {
-            $matches = collect($matches);
-
-            $matches->shift();
-
-            /** @phpstan-ignore-next-line */
-            $replacements = value($replacement, ...$matches) |> collect(...);
-
-            /** @var string $segment */
-            $segment = $segments->shift();
-
-            return $replacements->zip($segments)->reduce(static function (string $carry, Collection $pairs): string {
-                $delimiter = static::none();
-
-                /** @var string */
-                return $pairs->prepend($carry)->join($delimiter);
-            }, $segment);
-        }, $value);
     }
 }

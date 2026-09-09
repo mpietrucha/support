@@ -2,9 +2,9 @@
 
 namespace Mpietrucha\Support\Filesystem;
 
+use Illuminate\Support\Stringable;
 use Mpietrucha\Support\Filesystem;
 use Mpietrucha\Support\Str;
-use Mpietrucha\Support\Stringable;
 
 abstract class Touch
 {
