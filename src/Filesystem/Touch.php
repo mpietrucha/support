@@ -2,18 +2,19 @@
 
 namespace Mpietrucha\Support\Filesystem;
 
-use Illuminate\Support\Stringable;
 use Mpietrucha\Support\Filesystem;
+use Mpietrucha\Support\Str;
+use Mpietrucha\Support\Stringable;
 
 abstract class Touch
 {
     public static function file(string $path, ?string $directory = null): string
     {
-        $stringableFile = static::build($path, $directory);
+        $file = static::build($path, $directory);
 
-        Path::directory(...) |> $stringableFile->pipe(...) |> static::directory(...);
+        Path::directory(...) |> $file->pipe(...) |> static::directory(...);
 
-        return Filesystem::touch(...) |> $stringableFile->tap(...) |> static::normalize(...);
+        return Filesystem::touch(...) |> $file->tap(...) |> static::normalize(...);
     }
 
     public static function directory(string $path, ?string $directory = null): string
@@ -28,6 +29,6 @@ abstract class Touch
 
     protected static function build(string $path, ?string $directory = null): Stringable
     {
-        return Path::build($path, $directory) |> str(...);
+        return Path::build($path, $directory) |> Str::of(...);
     }
 }
