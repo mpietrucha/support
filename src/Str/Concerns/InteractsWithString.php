@@ -89,4 +89,13 @@ trait InteractsWithString
 
         return Str::afterLast($attribute, $indicator);
     }
+
+    public static function toRelationshipAttribute(string $attribute, ?string $relationship = null): string
+    {
+        if ($relationship === null) {
+            return $attribute;
+        }
+
+        return sprintf('%s.%s', $relationship, $attribute);
+    }
 }
