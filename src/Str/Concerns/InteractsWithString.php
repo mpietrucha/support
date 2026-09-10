@@ -70,7 +70,7 @@ trait InteractsWithString
         return StubRenderer::render($value, $replacements, $prefix, $suffix);
     }
 
-    public static function relationshipName(string $attribute): ?string
+    public static function relationship(string $attribute): ?string
     {
         $indicator = static::dot();
 
@@ -83,14 +83,14 @@ trait InteractsWithString
         return static::nullWhenEmpty($relationship);
     }
 
-    public static function relationshipAttribute(string $attribute): string
+    public static function attribute(string $attribute): string
     {
         $indicator = static::dot();
 
         return Str::afterLast($attribute, $indicator);
     }
 
-    public static function toRelationshipAttribute(string $attribute, ?string $relationship = null): string
+    public static function qualify(string $attribute, ?string $relationship = null): string
     {
         if ($relationship === null) {
             return $attribute;
