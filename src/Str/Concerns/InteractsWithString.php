@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Mpietrucha\Support\Str\Concerns;
 
-use Mpietrucha\Support\Str;
 use Mpietrucha\Support\Stubs\StubRenderer;
 
 /**
@@ -68,34 +67,5 @@ trait InteractsWithString
     public static function stub(string $value, array $replacements, ?string $prefix = null, ?string $suffix = null): string
     {
         return StubRenderer::render($value, $replacements, $prefix, $suffix);
-    }
-
-    public static function relationship(string $attribute): ?string
-    {
-        $indicator = static::dot();
-
-        $relationship = Str::beforeLast($attribute, $indicator);
-
-        if ($relationship === $attribute) {
-            return null;
-        }
-
-        return static::nullWhenEmpty($relationship);
-    }
-
-    public static function attribute(string $attribute): string
-    {
-        $indicator = static::dot();
-
-        return Str::afterLast($attribute, $indicator);
-    }
-
-    public static function qualify(string $attribute, ?string $relationship = null): string
-    {
-        if ($relationship === null) {
-            return $attribute;
-        }
-
-        return sprintf('%s.%s', $relationship, $attribute);
     }
 }
