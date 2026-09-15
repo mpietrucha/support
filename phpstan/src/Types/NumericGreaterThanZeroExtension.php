@@ -2,6 +2,7 @@
 
 namespace Mpietrucha\PHPStan\Types;
 
+use Illuminate\Support\Collection;
 use PhpParser\Node\Expr\StaticCall;
 use PHPStan\Analyser\Scope;
 use PHPStan\Analyser\SpecifiedTypes;
@@ -57,7 +58,7 @@ final class NumericGreaterThanZeroExtension implements StaticMethodTypeSpecifyin
             ])
         );
 
-        $arguments = $staticCall->getArgs() |> collect(...);
+        $arguments = $staticCall->getArgs() |> Collection::make(...);
 
         return $arguments->reduce(function (SpecifiedTypes $specifiedTypes, $arg) use ($numeric, $context, $scope, $staticCall): SpecifiedTypes {
             if ($arg->unpack) {

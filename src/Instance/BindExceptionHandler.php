@@ -193,7 +193,7 @@ abstract class BindExceptionHandler
      */
     protected static function getBindings(mixed $value): Collection
     {
-        $bindings = static::$bindings |> collect(...);
+        $bindings = static::$bindings |> Collection::make(...);
 
         $bindings->transform(static fn (array $arguments): ?Binding => Binding::for($value, ...$arguments));
 

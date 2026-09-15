@@ -43,9 +43,7 @@ abstract class Enum
             RuntimeException::throw('Enum `%s` not found', $enum);
         }
 
-        if ($class === null) {
-            $class = EnumInterface::class;
-        }
+        $class ??= EnumInterface::class;
 
         if (Instance::isNot($enum, $class)) {
             RuntimeException::throw('Enum `%s` must implement %s', $enum, $class);

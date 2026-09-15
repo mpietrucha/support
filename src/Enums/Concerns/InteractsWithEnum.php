@@ -34,7 +34,7 @@ trait InteractsWithEnum
     public static function collection(): Collection
     {
         /** @phpstan-ignore return.type */
-        return static::cases() |> collect(...);
+        return static::cases() |> Collection::make(...);
     }
 
     public static function default(): static

@@ -156,6 +156,6 @@ abstract class Instance
     public static function traits(object|string $class): Collection
     {
         /** @var TraitCollection */
-        return @class_uses_recursive($class) |> collect(...);
+        return @class_uses_recursive($class) |> Collection::make(...);
     }
 }

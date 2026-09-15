@@ -39,6 +39,6 @@ abstract class Backtrace
      */
     protected static function build(array $backtrace): Collection
     {
-        return Frame::make(...) |> collect($backtrace)->map(...);
+        return Frame::make(...) |> Collection::make($backtrace)->map(...);
     }
 }

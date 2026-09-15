@@ -2,6 +2,7 @@
 
 namespace Mpietrucha\Support\Stubs;
 
+use Illuminate\Support\Collection;
 use Mpietrucha\Support\Filesystem;
 use Mpietrucha\Support\Str;
 
@@ -28,7 +29,7 @@ class StubRenderer
         $prefix ??= static::getDefaultPrefix();
         $suffix ??= static::getDefaultSuffix();
 
-        return collect($replacements)->reduce(static function (string $value, string $replacement, string $name) use ($prefix, $suffix): string {
+        return Collection::make($replacements)->reduce(static function (string $value, string $replacement, string $name) use ($prefix, $suffix): string {
             $replacements = [
                 sprintf('%s%s%s', $prefix, $name, $suffix),
                 sprintf('%s %s %s', $prefix, $name, $suffix),
