@@ -5,7 +5,6 @@ declare(strict_types=1);
 use Rector\Config\RectorConfig;
 use Rector\DeadCode\Rector\Expression\RemoveDeadStmtRector;
 use Rector\DeadCode\Rector\Node\RemoveNonExistingVarAnnotationRector;
-use Rector\Naming\Rector\Assign\RenameVariableToMatchMethodCallReturnTypeRector;
 use Rector\Php74\Rector\Closure\ClosureToArrowFunctionRector;
 use Rector\TypeDeclaration\Rector\StmtsAwareInterface\SafeDeclareStrictTypesRector;
 use RectorLaravel\Set\LaravelSetList;
@@ -20,9 +19,6 @@ return RectorConfig::configure()
         ClosureToArrowFunctionRector::class,
         RemoveNonExistingVarAnnotationRector::class,
         SafeDeclareStrictTypesRector::class => [
-            'src/Filesystem/Touch.php',
-        ],
-        RenameVariableToMatchMethodCallReturnTypeRector::class => [
             'src/Filesystem/Touch.php',
         ],
     ])
@@ -44,7 +40,6 @@ return RectorConfig::configure()
         typeDeclarations: true,
         typeDeclarationDocblocks: true,
         privatization: true,
-        naming: true,
         instanceOf: true,
         earlyReturn: true,
         carbon: true
