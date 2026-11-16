@@ -6,6 +6,7 @@ namespace Mpietrucha\Support\Reflection;
 
 use Laravel\SerializableClosure\Support\ReflectionClosure as LaravelReflectionClosure;
 use Mpietrucha\Support\Concerns\Makeable;
+use ReflectionClass;
 
 class ReflectionClosure extends LaravelReflectionClosure
 {
@@ -13,6 +14,6 @@ class ReflectionClosure extends LaravelReflectionClosure
 
     public function isUnbound(): bool
     {
-        return $this->getClosureThis() === null && $this->getClosureScopeClass() === null;
+        return $this->getClosureThis() === null && ! $this->getClosureScopeClass() instanceof ReflectionClass;
     }
 }

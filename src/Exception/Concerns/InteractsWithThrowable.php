@@ -17,11 +17,21 @@ use Throwable;
 trait InteractsWithThrowable
 {
     /**
-     * @param  Closure(ThrowableBuilder): void  $buildUsing
+     * @param  Closure(ThrowableBuilder): void  $callback
      */
-    public static function buildUsing(Closure $buildUsing): void
+    public static function tap(Closure $callback): void
     {
-        ThrowableBuilder::buildUsing($buildUsing);
+        ThrowableBuilder::tap($callback);
+    }
+
+    public static function useCode(int $code): void
+    {
+        ThrowableBuilder::useCode($code);
+    }
+
+    public static function usePrevious(Throwable $throwable): void
+    {
+        ThrowableBuilder::usePrevious($throwable);
     }
 
     public static function build(?string $message = null, null|bool|float|int|string ...$arguments): static

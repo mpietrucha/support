@@ -67,7 +67,7 @@ readonly class Binding
 
     public function getLine(): false|int
     {
-        if ($this->source === null) {
+        if (! $this->source instanceof ReflectionClass) {
             return $this->closure->getStartLine();
         }
 
@@ -83,7 +83,7 @@ readonly class Binding
 
     public function transformLine(int $line): int
     {
-        if ($this->source === null) {
+        if (! $this->source instanceof ReflectionClass) {
             return $line;
         }
 

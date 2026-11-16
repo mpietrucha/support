@@ -17,15 +17,41 @@ class ThrowableBuilder implements Arrayable
 
     protected ?string $message = null;
 
-    protected int $line = 0;
+    protected int $code = 0;
 
     protected ?Throwable $previous = null;
 
-    protected static ?Closure $buildUsing = null;
+    protected static ?Closure $tap = null;
 
-    public static function buildUsing(Closure $buildUsing): void
+    public static function tap(Closure $callback): void
     {
-        static::$buildUsing = $buildUsing;
+        if (! static::$tap instanceof Closure) {
+            static::$tap = $callback;
+
+            return;
+        }
+
+        $tap = static::$tap;
+
+        static::$tap = static function (self $throwableBuilder) use ($tap, $callback): void {
+            value($tap, $throwableBuilder);
+
+            value($callback, $throwableBuilder);
+        };
+    }
+
+    public static function useCode(int $code): void
+    {
+        static::tap(static function (self $throwableBuilder) use ($code): void {
+            $throwableBuilder->setCode($code);
+        });
+    }
+
+    public static function usePrevious(Throwable $throwable): void
+    {
+        static::tap(static function (self $throwableBuilder) use ($throwable): void {
+            $throwableBuilder->setPrevious($throwable);
+        });
     }
 
     public function setMessage(string $message, null|bool|float|int|string ...$arguments): static
@@ -35,9 +61,9 @@ class ThrowableBuilder implements Arrayable
         return $this;
     }
 
-    public function setLine(int $line): static
+    public function setCode(int $code): static
     {
-        $this->line = $line;
+        $this->code = $code;
 
         return $this;
     }
@@ -56,7 +82,7 @@ class ThrowableBuilder implements Arrayable
     {
         return [
             $this->message ?? Str::none(),
-            $this->line,
+            $this->code,
             $this->previous,
         ];
     }
@@ -69,11 +95,11 @@ class ThrowableBuilder implements Arrayable
      */
     public function build(string $throwable): Throwable
     {
-        $buildUsing = tap(static::$buildUsing, static function (): void {
-            static::$buildUsing = null;
+        $tap = tap(static::$tap, static function (): void {
+            static::$tap = null;
         });
 
-        value($buildUsing, $this);
+        value($tap, $this);
 
         return new $throwable(...$this->toArray());
     }
