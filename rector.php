@@ -5,7 +5,9 @@ declare(strict_types=1);
 use Rector\Config\RectorConfig;
 use Rector\DeadCode\Rector\Expression\RemoveDeadStmtRector;
 use Rector\DeadCode\Rector\Node\RemoveNonExistingVarAnnotationRector;
+use Rector\Php55\Rector\FuncCall\GetCalledClassToStaticClassRector;
 use Rector\Php74\Rector\Closure\ClosureToArrowFunctionRector;
+use Rector\Php80\Rector\FuncCall\ClassOnObjectRector;
 use Rector\TypeDeclaration\Rector\StmtsAwareInterface\SafeDeclareStrictTypesRector;
 use RectorLaravel\Set\LaravelSetList;
 
@@ -18,6 +20,8 @@ return RectorConfig::configure()
         RemoveDeadStmtRector::class,
         ClosureToArrowFunctionRector::class,
         RemoveNonExistingVarAnnotationRector::class,
+        GetCalledClassToStaticClassRector::class,
+        ClassOnObjectRector::class,
         SafeDeclareStrictTypesRector::class => [
             'src/Filesystem/Touch.php',
         ],

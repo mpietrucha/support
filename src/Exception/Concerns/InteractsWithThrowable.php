@@ -42,7 +42,7 @@ trait InteractsWithThrowable
             $throwableBuilder->setMessage($message, ...$arguments);
         }
 
-        return $throwableBuilder->build(static::class);
+        return get_called_class() |> $throwableBuilder->build(...);
     }
 
     public static function make(?string $message = null, null|bool|float|int|string ...$arguments): static

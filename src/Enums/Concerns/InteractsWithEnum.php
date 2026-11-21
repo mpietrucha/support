@@ -14,7 +14,7 @@ trait InteractsWithEnum
 {
     public static function build(mixed $value): static
     {
-        $enum = static::class;
+        $enum = get_called_class();
 
         if ($value instanceof $enum) {
             return $value;

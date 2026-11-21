@@ -22,7 +22,7 @@ abstract class Instance
     public static function namespace(object|string $class, bool $autoload = true): ?string
     {
         if (is_object($class)) {
-            return $class::class;
+            return get_class($class);
         }
 
         return class_exists($class, $autoload) || interface_exists($class, $autoload) || trait_exists($class, $autoload) ? $class : null;
